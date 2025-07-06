@@ -15,7 +15,7 @@
     .photo-section { border: 1px solid #ccc; padding: 10px; margin-top: 15px; background: white; }
     .photo-section img { max-width: 100%; height: auto; margin-top: 8px; display: block; }
     button { margin-top: 20px; padding: 10px 15px; background: #42b0e5; color: white; border: none; border-radius: 4px; cursor: pointer; }
-    #logo-preview { display: none; } /* Verborgen, we gebruiken hem in JS */
+    #logo-preview { display: none; }
   </style>
 </head>
 <body>
@@ -43,15 +43,13 @@
 
 <div id="photos-container"></div>
 
-<button id="add-section">+ Voeg Foto Toe</button>
+<button id="add-section">➕ Voeg een nieuwe sectie toe</button>
 <button id="generate">📄 Genereer PDF</button>
 
 <script>
   const { jsPDF } = window.jspdf;
-  let photoCount = 0;
 
-  document.getElementById("add-section").onclick = () => {
-    const container = document.getElementById("photos-container");
+  function createPhotoSection() {
     const section = document.createElement("div");
     section.className = "photo-section";
 
@@ -80,9 +78,16 @@
     section.appendChild(input);
     section.appendChild(preview);
     section.appendChild(uitleg);
-    container.appendChild(section);
 
-    photoCount++;
+    document.getElementById("photos-container").appendChild(section);
+  }
+
+  // Voeg bij het starten al twee foto-secties toe
+  createPhotoSection();
+  createPhotoSection();
+
+  document.getElementById("add-section").onclick = () => {
+    createPhotoSection();
   };
 
   document.getElementById("generate").onclick = async () => {
@@ -103,16 +108,12 @@
     const logo = document.getElementById("logo-preview");
 
     async function addHeader() {
-      // Kleurblok
       pdf.setFillColor("#42b0e5");
       pdf.rect(0, 0, pageWidth, 25, "F");
-
-      // Tekst
       pdf.setFontSize(13);
       pdf.setTextColor(255);
       pdf.text("DOA-DIAGNOSTICS DIAGNOSE VERSLAG", 10, 17);
 
-      // Logo rechts boven
       if (logo && logo.src) {
         const img = new Image();
         img.src = logo.src;
@@ -132,10 +133,10 @@
 
     await addHeader();
 
-    const addTextBlock = (title, text) => {
+    function addTextBlock(title, text) {
       if (y > pageHeight - 40) {
         pdf.addPage();
-        await addHeader();
+        addHeader();
       }
       pdf.setTextColor(0);
       pdf.setFontSize(12);
@@ -145,12 +146,13 @@
       lines.forEach(line => {
         if (y > pageHeight - 20) {
           pdf.addPage();
-          await addHeader();
+          addHeader();
+          y = 30;
         }
         pdf.text(line, 10, y); y += 5;
       });
       y += 5;
-    };
+    }
 
     addTextBlock("Opdrachtgever:", klant);
     addTextBlock("Datum:", datum);
@@ -176,7 +178,7 @@
         const h = pxToMm(img.height);
 
         if (y + h > pageHeight - 20) {
-          pdf.addPage(); await addHeader();
+          pdf.addPage(); await addHeader(); y = 30;
         }
 
         pdf.setFontSize(12);
@@ -187,7 +189,7 @@
         const uitlegLines = pdf.splitTextToSize(uitleg, pageWidth - 20);
         uitlegLines.forEach(line => {
           if (y > pageHeight - 20) {
-            pdf.addPage(); await addHeader();
+            pdf.addPage(); await addHeader(); y = 30;
           }
           pdf.text(line, 10, y); y += 5;
         });
