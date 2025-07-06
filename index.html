@@ -1,19 +1,16 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8">
   <title>DOA Diagnoseverslag PDF</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
     body { font-family: Arial, sans-serif; margin: 20px; background: #f9f9f9; }
-    label { display: block; margin-top: 10px; font-weight: bold; }
-    input[type="text"], input[type="date"], textarea {
-      width: 100%; padding: 8px; margin-top: 5px; box-sizing: border-box;
-    }
+    label { font-weight: bold; display: block; margin-top: 10px; }
+    input, textarea { width: 100%; padding: 8px; margin-top: 5px; box-sizing: border-box; }
     textarea { resize: vertical; }
     .photo-section { border: 1px solid #ccc; padding: 10px; margin-top: 15px; background: white; }
-    .photo-section img { max-width: 100%; height: auto; margin-top: 8px; display: block; }
+    .photo-section img { max-width: 100%; display: block; margin-top: 10px; }
     button { margin-top: 20px; padding: 10px 15px; background: #42b0e5; color: white; border: none; border-radius: 4px; cursor: pointer; }
     #logo-preview { display: none; }
   </style>
@@ -25,21 +22,21 @@
 <img id="logo-preview" src="IMG_1971.png" />
 
 <label>Opdrachtgever:</label>
-<input type="text" id="klant" placeholder="Naam opdrachtgever" />
+<input type="text" id="klant" />
 <label>Datum:</label>
 <input type="date" id="datum" />
 <label>Kenteken:</label>
-<input type="text" id="kenteken" placeholder="Kenteken" />
+<input type="text" id="kenteken" />
 <label>Merk / Type:</label>
-<input type="text" id="merk" placeholder="Merk / Type" />
+<input type="text" id="merk" />
 <label>VIN:</label>
-<input type="text" id="vin" placeholder="VIN nummer" />
+<input type="text" id="vin" />
 <label>Kilometerstand:</label>
-<input type="text" id="kmstand" placeholder="Kilometerstand" />
+<input type="text" id="kmstand" />
 <label>Klachtomschrijving:</label>
-<textarea id="klacht" rows="5" placeholder="Omschrijf de klacht..."></textarea>
+<textarea id="klacht" rows="5"></textarea>
 <label>Diagnose:</label>
-<textarea id="diagnose" rows="6" placeholder="Beschrijf de diagnose..."></textarea>
+<textarea id="diagnose" rows="6"></textarea>
 
 <div id="photos-container"></div>
 
@@ -53,19 +50,18 @@
     const section = document.createElement("div");
     section.className = "photo-section";
 
-    const input = document.createElement("input");
-    input.type = "file";
-    input.accept = "image/*";
+    const fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.accept = "image/*";
 
     const preview = document.createElement("img");
 
-    input.onchange = () => {
-      const file = input.files[0];
+    fileInput.onchange = () => {
+      const file = fileInput.files[0];
       if (file) {
         const reader = new FileReader();
         reader.onload = e => {
           preview.src = e.target.result;
-          preview.style.display = "block";
         };
         reader.readAsDataURL(file);
       }
@@ -75,18 +71,20 @@
     uitleg.placeholder = "Uitleg bij de foto...";
     uitleg.rows = 3;
 
-    section.appendChild(input);
+    section.appendChild(fileInput);
     section.appendChild(preview);
     section.appendChild(uitleg);
 
     document.getElementById("photos-container").appendChild(section);
   }
 
-  // Voeg bij het starten al twee foto-secties toe
+  // Voeg standaard 2 secties toe bij het starten
   createPhotoSection();
   createPhotoSection();
 
+  // Voeg telkens 2 nieuwe secties toe bij klik
   document.getElementById("add-section").onclick = () => {
+    createPhotoSection();
     createPhotoSection();
   };
 
