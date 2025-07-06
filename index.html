@@ -3,16 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <title>DOA Diagnoseverslag</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
-    * {
-      box-sizing: border-box;
-    }
-
     body {
       font-family: Arial, sans-serif;
       margin: 0;
-      background-color: #fff;
-      color: #000;
     }
 
     header {
@@ -22,16 +17,17 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-    }
-
-    header h1 {
-      font-size: 20px;
-      margin: 0;
+      position: sticky;
+      top: 0;
     }
 
     header img {
       height: 50px;
-      object-fit: contain;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 20px;
     }
 
     main {
@@ -39,54 +35,66 @@
     }
 
     label {
-      font-weight: bold;
       display: block;
+      font-weight: bold;
       margin-top: 20px;
       font-size: 18px;
     }
 
     input[type="text"], textarea {
       width: 100%;
-      padding: 12px;
+      padding: 10px;
       margin-top: 5px;
       font-size: 16px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
+      box-sizing: border-box;
     }
 
     textarea {
+      height: 100px;
       resize: vertical;
-      min-height: 100px;
     }
 
     .photo-section {
       margin-top: 30px;
+      border-top: 1px solid #ccc;
       padding-top: 20px;
-      border-top: 1px solid #ddd;
     }
 
-    .photo-section input[type="file"] {
+    .photo-input {
       margin-top: 10px;
+    }
+
+    .photo-input input {
       display: block;
-    }
-
-    .photo-section textarea {
-      margin-top: 10px;
+      margin-bottom: 10px;
     }
 
     .add-section-btn {
-      margin-top: 40px;
+      margin-top: 30px;
       background-color: #42B0E5;
       color: white;
-      border: none;
-      padding: 15px 25px;
+      padding: 12px 20px;
       font-size: 16px;
+      border: none;
       cursor: pointer;
-      border-radius: 5px;
     }
 
     .add-section-btn:hover {
-      background-color: #3594c3;
+      background-color: #379cd0;
+    }
+
+    .generate-btn {
+      margin-top: 40px;
+      background-color: #28a745;
+      color: white;
+      padding: 12px 20px;
+      font-size: 16px;
+      border: none;
+      cursor: pointer;
+    }
+
+    .generate-btn:hover {
+      background-color: #218838;
     }
   </style>
 </head>
@@ -94,10 +102,10 @@
 
   <header>
     <h1>DOA-DIAGNOSTICS DIAGNOSE VERSLAG</h1>
-    <img src="IMG_1971.png" alt="Logo">
+    <img src="IMG_1971.png" alt="DOA Logo">
   </header>
 
-  <main>
+  <main id="verslag">
     <label for="opdrachtgever">Opdrachtgever</label>
     <input type="text" id="opdrachtgever" name="opdrachtgever">
 
@@ -128,41 +136,76 @@
     <label for="analyse">Analyse van de permanent fouten</label>
     <textarea id="analyse" name="analyse"></textarea>
 
-    <div class="photo-section">
-      <label>Foto bij Analyse</label>
+    <div class="photo-input">
+      <label>Foto toevoegen bij Analyse</label>
       <input type="file" accept="image/*">
-      <textarea placeholder="Uitleg bij de foto van de analyse..."></textarea>
+      <textarea placeholder="Uitleg bij de foto"></textarea>
     </div>
 
     <div id="photoSections">
       <div class="photo-section">
         <label>Foto 1</label>
         <input type="file" accept="image/*">
-        <textarea placeholder="Uitleg bij foto 1..."></textarea>
+        <textarea placeholder="Uitleg bij foto 1"></textarea>
       </div>
       <div class="photo-section">
         <label>Foto 2</label>
         <input type="file" accept="image/*">
-        <textarea placeholder="Uitleg bij foto 2..."></textarea>
+        <textarea placeholder="Uitleg bij foto 2"></textarea>
       </div>
     </div>
 
     <button class="add-section-btn" onclick="addPhotoSection()">Voeg een nieuwe sectie toe</button>
+
+    <button class="generate-btn" onclick="generatePDF()">Genereer PDF</button>
   </main>
 
   <script>
     function addPhotoSection() {
       const container = document.getElementById("photoSections");
       for (let i = 0; i < 2; i++) {
-        const div = document.createElement("div");
-        div.className = "photo-section";
-        div.innerHTML = `
+        const section = document.createElement("div");
+        section.className = "photo-section";
+        section.innerHTML = `
           <label>Foto</label>
           <input type="file" accept="image/*">
-          <textarea placeholder="Uitleg bij de foto..."></textarea>
+          <textarea placeholder="Uitleg bij de foto"></textarea>
         `;
-        container.appendChild(div);
+        container.appendChild(section);
       }
+    }
+
+    async function generatePDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+
+      const veld = (id, label) => {
+        const val = document.getElementById(id).value;
+        return `${label}: ${val}`;
+      };
+
+      const tekst = [
+        veld("opdrachtgever", "Opdrachtgever"),
+        veld("kenteken", "Kenteken"),
+        veld("merk", "Merk / Type"),
+        veld("bouwjaar", "Bouwjaar"),
+        veld("kmstand", "Km-stand"),
+        veld("vin", "VIN"),
+        veld("motorcode", "Motorcode"),
+        "",
+        "Klachtomschrijving:",
+        document.getElementById("klacht").value,
+        "",
+        "Diagnose:",
+        document.getElementById("diagnose").value,
+        "",
+        "Analyse van de permanent fouten:",
+        document.getElementById("analyse").value
+      ];
+
+      const lines = doc.splitTextToSize(tekst.join("\n"), 180);
+      doc.text(lines, 10, 10);
+      doc.save("DOA_Diagnoseverslag.pdf");
     }
   </script>
 
