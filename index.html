@@ -28,7 +28,7 @@
         <img src="IMG_1971.png" alt="Logo">
     </div>
 
-    <div class="container my-4">
+    <div class="container my-4" id="verslag">
         <div class="mb-3">
             <label class="form-label">Opdrachtgever:</label>
             <input type="text" class="form-control">
@@ -70,43 +70,45 @@
             <textarea class="form-control" rows="4"></textarea>
         </div>
 
-        <button class="btn btn-primary">Genereer PDF</button>
-    </div>
-
-    <!-- FOTO SECTIES ONDERAAN -->
-    <div class="container my-4" id="foto-secties">
-
-        <!-- Analyse permanente fouten -->
-        <div class="mb-4">
-            <label class="form-label fw-bold">Analyse van de permanente fouten:</label>
-            <textarea class="form-control mb-2" rows="3"></textarea>
-            <input type="file" accept="image/*" class="form-control">
-        </div>
-
-        <!-- Twee standaard foto vakken -->
-        <div class="row mb-3">
-            <div class="col-md-6 mb-3">
-                <label class="form-label">Uitleg bij Foto 1:</label>
+        <!-- FOTO SECTIES -->
+        <div class="my-4" id="foto-secties">
+            <!-- Analyse permanente fouten -->
+            <div class="mb-4">
+                <label class="form-label fw-bold">Analyse van de permanente fouten:</label>
                 <textarea class="form-control mb-2" rows="3"></textarea>
                 <input type="file" accept="image/*" class="form-control">
             </div>
-            <div class="col-md-6 mb-3">
-                <label class="form-label">Uitleg bij Foto 2:</label>
-                <textarea class="form-control mb-2" rows="3"></textarea>
-                <input type="file" accept="image/*" class="form-control">
+
+            <!-- Twee standaard foto vakken -->
+            <div class="row mb-3">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Uitleg bij Foto 1:</label>
+                    <textarea class="form-control mb-2" rows="3"></textarea>
+                    <input type="file" accept="image/*" class="form-control">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Uitleg bij Foto 2:</label>
+                    <textarea class="form-control mb-2" rows="3"></textarea>
+                    <input type="file" accept="image/*" class="form-control">
+                </div>
             </div>
+
+            <button id="add-section-btn" class="btn btn-secondary mb-4">Voeg een nieuwe sectie toe</button>
         </div>
 
-        <!-- Knop om nieuwe secties toe te voegen -->
-        <button id="add-section-btn" class="btn btn-secondary mb-5">Voeg een nieuwe sectie toe</button>
+        <!-- PDF knop helemaal onderaan -->
+        <button class="btn btn-primary mb-5" id="download-pdf">Genereer PDF</button>
     </div>
+
+    <!-- html2pdf library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
     <script>
+        // Voeg dynamisch extra foto secties toe
         const fotoSecties = document.getElementById('foto-secties');
         const addSectionBtn = document.getElementById('add-section-btn');
 
         addSectionBtn.addEventListener('click', () => {
-            // Maak een nieuwe rij aan met 2 kolommen (elk met tekstveld + foto upload)
             const newRow = document.createElement('div');
             newRow.className = 'row mb-3';
 
@@ -134,8 +136,19 @@
                 newRow.appendChild(col);
             }
 
-            // Voeg de nieuwe rij toe vlak boven de knop
             fotoSecties.insertBefore(newRow, addSectionBtn);
+        });
+
+        // PDF genereren (werkt ook op mobiel)
+        document.getElementById('download-pdf').addEventListener('click', () => {
+            const element = document.getElementById('verslag');
+            html2pdf().from(element).set({
+                margin: 0.5,
+                filename: 'diagnose-verslag.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+            }).save();
         });
     </script>
 </body>
