@@ -97,11 +97,8 @@
 <label>Diagnose:</label>
 <textarea id="diagnose" rows="5"></textarea>
 
-
 <label>Verklaring van opdrachtgever:</label>
 <textarea id="fouten" rows="5"></textarea>
-
-
 
 <div class="photo-section">
   <label>Analyse van de permanent fouten</label>
@@ -274,8 +271,16 @@
       ctx.drawImage(analyseImg, 0, 0);
       const dataUrl = canvas.toDataURL('image/jpeg');
 
-      const imgHeight = (180 / analyseImg.naturalWidth) * analyseImg.naturalHeight;
-      pdf.addImage(dataUrl, 'JPEG', 10, y, 180, imgHeight);
+      let imgWidth = 180;
+      let imgHeight = (imgWidth / analyseImg.naturalWidth) * analyseImg.naturalHeight;
+
+      if (y + imgHeight > 280) {
+        pdf.addPage();
+        addHeader();
+        y = 40;
+      }
+
+      pdf.addImage(dataUrl, 'JPEG', 10, y, imgWidth, imgHeight);
       y += imgHeight + 10;
     }
 
@@ -299,8 +304,16 @@
         ctx.drawImage(img, 0, 0);
         const dataUrl = canvas.toDataURL('image/jpeg');
 
-        const imgHeight = (180 / img.naturalWidth) * img.naturalHeight;
-        pdf.addImage(dataUrl, 'JPEG', 10, y, 180, imgHeight);
+        let imgWidth = 180;
+        let imgHeight = (imgWidth / img.naturalWidth) * img.naturalHeight;
+
+        if (y + imgHeight > 280) {
+          pdf.addPage();
+          addHeader();
+          y = 40;
+        }
+
+        pdf.addImage(dataUrl, 'JPEG', 10, y, imgWidth, imgHeight);
         y += imgHeight + 10;
       }
     }
