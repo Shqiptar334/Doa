@@ -46,7 +46,7 @@
 
 <h1>DOA Diagnoseverslag PDF Generator</h1>
 
-<img id="logo-preview" src="doa_logo.png" alt="DOA Logo">
+<img id="logo-preview" src="IMG_1971.png" alt="DOA Logo">
 
 <label>Opdrachtgever:</label>
 <input type="text" id="klant" placeholder="Naam opdrachtgever" />
@@ -150,68 +150,49 @@
     window.scrollTo(0, document.body.scrollHeight);
   };
 
-  async function loadAndResizeImage(file, maxWidth = 180) {
-    return new Promise(resolve => {
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const img = new Image();
-        img.onload = function() {
-          const scale = Math.min(maxWidth / img.width, 1);
-          const canvas = document.createElement('canvas');
-          canvas.width = img.width * scale;
-          canvas.height = img.height * scale;
-
-          const ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-          resolve(canvas.toDataURL('image/jpeg', 0.95));
-        };
-        img.src = e.target.result;
-      };
-      reader.readAsDataURL(file);
-    });
+  function addHeader(pdf, pageWidth) {
+    pdf.setFillColor('#42B0E5');
+    pdf.rect(0, 0, pageWidth, 30, 'F');
+    pdf.setTextColor(255);
+    pdf.setFontSize(16);
+    pdf.text("DOA-DIAGNOSTICS DIAGNOSE VERSLAG", pageWidth / 2, 20, { align: "center" });
   }
 
   document.getElementById('generate').onclick = async () => {
     const pdf = new jsPDF();
     const pageWidth = pdf.internal.pageSize.getWidth();
     const pageHeight = pdf.internal.pageSize.getHeight();
-    let y = 0;
+    let y = 40;
 
-    // Blauwe header
-    pdf.setFillColor('#42b0e5');
-    pdf.rect(0, 0, pageWidth, 30, 'F');
+    addHeader(pdf, pageWidth);
 
     const logoImg = document.getElementById('logo-preview');
-    if (logoImg && logoImg.complete && logoImg.naturalWidth > 0) {
-      try {
-        const canvas = document.createElement('canvas');
-        canvas.width = logoImg.naturalWidth;
-        canvas.height = logoImg.naturalHeight;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(logoImg, 0, 0);
-        const logoData = canvas.toDataURL('image/png');
-        pdf.addImage(logoData, 'PNG', 10, 5, 30, 20);
-      } catch (err) {
-        console.warn("Logo kon niet worden geladen:", err);
-      }
+    if (logoImg && logoImg.complete && logoImg.naturalWidth) {
+      const canvas = document.createElement('canvas');
+      canvas.width = logoImg.naturalWidth;
+      canvas.height = logoImg.naturalHeight;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(logoImg, 0, 0);
+      const logoData = canvas.toDataURL('image/png');
+      pdf.addImage(logoData, 'PNG', 10, 5, 30, 20);
     }
-
-    pdf.setTextColor(255);
-    pdf.setFontSize(16);
-    pdf.text("DOA-DIAGNOSTICS DIAGNOSE VERSLAG", pageWidth / 2, 20, { align: "center" });
-
-    y = 40;
 
     function addTextBlock(title, text) {
       pdf.setTextColor(0);
       pdf.setFontSize(13);
+      if (y > pageHeight - 20) {
+        pdf.addPage();
+        y = 40;
+        addHeader(pdf, pageWidth);
+      }
       pdf.text(title, 15, y); y += 8;
-
       pdf.setFontSize(11);
       const lines = pdf.splitTextToSize(text, pageWidth - 30);
       for (let line of lines) {
         if (y > pageHeight - 20) {
-          pdf.addPage(); y = 20;
+          pdf.addPage();
+          y = 40;
+          addHeader(pdf, pageWidth);
         }
         pdf.text(line, 15, y); y += 6;
       }
@@ -237,20 +218,29 @@
 
       if (fileInput.files.length > 0) {
         const file = fileInput.files[0];
-        const dataUrl = await loadAndResizeImage(file, 180);
+        const dataUrl = await new Promise(res => {
+          const reader = new FileReader();
+          reader.onload = e => res(e.target.result);
+          reader.readAsDataURL(file);
+        });
 
-        if (y > pageHeight - 100) { pdf.addPage(); y = 20; }
+        if (y > pageHeight - 100) {
+          pdf.addPage();
+          y = 40;
+          addHeader(pdf, pageWidth);
+        }
+
         pdf.setFontSize(13);
         pdf.text(`Bewijsfoto ${i + 1}`, 15, y); y += 8;
-        pdf.addImage(dataUrl, 'JPEG', 15, y, 180, 0); // hoogte auto
-        y += 85;
+        pdf.addImage(dataUrl, 'JPEG', 15, y, 180, 80); y += 85;
 
         const uitlegLines = pdf.splitTextToSize(uitleg, pageWidth - 30);
         pdf.setFontSize(11);
         for (let line of uitlegLines) {
           if (y > pageHeight - 20) {
             pdf.addPage();
-            y = 20;
+            y = 40;
+            addHeader(pdf, pageWidth);
           }
           pdf.text(line, 15, y); y += 6;
         }
