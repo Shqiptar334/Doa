@@ -6,56 +6,148 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        input, textarea { display: block; margin-bottom: 10px; width: 100%; padding: 5px; }
-        .fotoSectie { border: 1px solid #ccc; padding: 10px; margin-top: 10px; }
-        h3 { color: #42b0e5; }
-        button { padding: 10px; margin-top: 10px; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f4f7fa;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background: #42b0e5;
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        header img {
+            height: 50px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 30px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #42b0e5;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 6px;
+            color: #333;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #42b0e5;
+            box-shadow: 0 0 5px rgba(66, 176, 229, 0.5);
+        }
+        .foto-sectie {
+            border: 2px dashed #42b0e5;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            background: #fafcfe;
+        }
+        .foto-sectie textarea {
+            font-weight: bold;
+            font-size: 15px;
+        }
+        button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-right: 10px;
+        }
+        #voegSectieToe {
+            background: #28a745;
+            color: white;
+        }
+        #voegSectieToe:hover {
+            background: #218838;
+        }
+        #genereerPdf {
+            background: #007bff;
+            color: white;
+        }
+        #genereerPdf:hover {
+            background: #0069d9;
+        }
     </style>
 </head>
 <body>
 
-<h1 style="color: #42b0e5;">DOA-DIAGNOSTICS DIAGNOSE VERSLAG</h1>
+<header>
+    <div>DOA-DIAGNOSTICS DIAGNOSE VERSLAG</div>
+    <img src="IMG_1971.png" alt="Logo">
+</header>
 
-<form id="diagnoseForm">
-    <input type="text" name="opdrachtgever" placeholder="Opdrachtgever" required>
-    <input type="date" name="datum" required>
-    <input type="text" name="kenteken" placeholder="Kenteken" required>
-    <input type="text" name="merk" placeholder="Merk / Type" required>
-    <input type="number" name="bouwjaar" placeholder="Bouwjaar" required>
-    <input type="text" name="vin" placeholder="VIN" required>
-    <input type="text" name="motorcode" placeholder="Motorcode" required>
-    <input type="number" name="kilometerstand" placeholder="Kilometerstand" required>
-    <textarea name="klachtomschrijving" placeholder="Klachtomschrijving" required></textarea>
-    <textarea name="diagnose" placeholder="Diagnose" required></textarea>
-    <textarea name="verklaring" placeholder="Verklaring van opdrachtgever" required></textarea>
+<div class="container">
+    <form id="diagnoseForm">
+        <h2>Gegevens</h2>
+        <div class="form-group"><label>Opdrachtgever</label><input type="text" name="opdrachtgever" required></div>
+        <div class="form-group"><label>Datum</label><input type="date" name="datum" required></div>
+        <div class="form-group"><label>Kenteken</label><input type="text" name="kenteken" required></div>
+        <div class="form-group"><label>Merk / Type</label><input type="text" name="merk" required></div>
+        <div class="form-group"><label>Bouwjaar</label><input type="number" name="bouwjaar" required></div>
+        <div class="form-group"><label>VIN</label><input type="text" name="vin" required></div>
+        <div class="form-group"><label>Motorcode</label><input type="text" name="motorcode" required></div>
+        <div class="form-group"><label>Kilometerstand</label><input type="number" name="kilometerstand" required></div>
+        <div class="form-group"><label>Klachtomschrijving</label><textarea name="klachtomschrijving" required></textarea></div>
+        <div class="form-group"><label>Diagnose</label><textarea name="diagnose" required></textarea></div>
+        <div class="form-group"><label>Verklaring van opdrachtgever</label><textarea name="verklaring" required></textarea></div>
 
-    <h3>Analyse van de permanente fouten</h3>
-    <input type="file" accept="image/*" class="permanenteFoto">
-    <textarea placeholder="Uitleg bij foto" class="permanenteUitleg"></textarea>
-
-    <h3>Foto's</h3>
-    <div id="fotoSecties">
-        <div class="fotoSectie">
-            <input type="file" accept="image/*">
-            <textarea placeholder="Uitleg bij foto"></textarea>
+        <h2>Analyse van de permanente fouten</h2>
+        <div class="foto-sectie">
+            <input type="file" accept="image/*" class="permanenteFoto">
+            <textarea placeholder="Uitleg bij deze foto" class="permanenteUitleg"></textarea>
         </div>
-        <div class="fotoSectie">
-            <input type="file" accept="image/*">
-            <textarea placeholder="Uitleg bij foto"></textarea>
-        </div>
-    </div>
 
-    <button type="button" id="voegSectieToe" style="background: green; color: white;">Voeg een nieuwe sectie toe</button>
-    <button type="button" id="genereerPdf" style="background: blue; color: white;">Genereer PDF</button>
-</form>
+        <h2>Foto's</h2>
+        <div id="fotoSecties">
+            <div class="foto-sectie">
+                <input type="file" accept="image/*">
+                <textarea placeholder="Uitleg bij foto"></textarea>
+            </div>
+            <div class="foto-sectie">
+                <input type="file" accept="image/*">
+                <textarea placeholder="Uitleg bij foto"></textarea>
+            </div>
+        </div>
+
+        <button type="button" id="voegSectieToe">Voeg een nieuwe sectie toe</button>
+        <button type="button" id="genereerPdf">Genereer PDF</button>
+    </form>
+</div>
 
 <script>
+// extra secties toevoegen
 document.getElementById('voegSectieToe').addEventListener('click', () => {
     const container = document.getElementById('fotoSecties');
     for (let i = 0; i < 2; i++) {
         const div = document.createElement('div');
-        div.className = 'fotoSectie';
+        div.className = 'foto-sectie';
         div.innerHTML = `
             <input type="file" accept="image/*">
             <textarea placeholder="Uitleg bij foto"></textarea>
@@ -64,7 +156,6 @@ document.getElementById('voegSectieToe').addEventListener('click', () => {
     }
 });
 
-// laad logo als base64
 let logoBase64 = '';
 fetch('IMG_1971.png')
 .then(res => res.blob())
@@ -79,14 +170,8 @@ document.getElementById('genereerPdf').addEventListener('click', async () => {
     const data = new FormData(form);
 
     let content = [];
-    // logo
-    if (logoBase64) {
-        content.push({ image: logoBase64, width: 150, alignment: 'center', margin: [0, 0, 0, 10] });
-    }
-    // titel
-    content.push({ text: 'DOA-DIAGNOSTICS DIAGNOSE VERSLAG', color: '#42b0e5', fontSize: 18, alignment: 'center', margin: [0, 0, 0, 10] });
 
-    // velden
+    // Gegevensvelden
     const velden = [
         ['Opdrachtgever', data.get('opdrachtgever')],
         ['Datum', data.get('datum')],
@@ -100,47 +185,59 @@ document.getElementById('genereerPdf').addEventListener('click', async () => {
         ['Diagnose', data.get('diagnose')],
         ['Verklaring van opdrachtgever', data.get('verklaring')]
     ];
+
     velden.forEach(([label, value]) => {
-        content.push({ text: `${label}: ${value}`, margin: [0, 0, 0, 5] });
+        content.push({
+            columns: [
+                { text: label + ':', bold: true, width: '30%' },
+                { text: value || '', width: '70%' }
+            ],
+            margin: [0, 2, 0, 5]
+        });
     });
 
-    // permanente fouten
-    const permanenteFotoInput = document.querySelector('.permanenteFoto');
-    const permanenteUitleg = document.querySelector('.permanenteUitleg').value;
-    if (permanenteUitleg) {
-        content.push({ text: permanenteUitleg, margin: [0, 5, 0, 5] });
-    }
-    if (permanenteFotoInput.files.length) {
-        const imgData = await toDataURL(permanenteFotoInput.files[0]);
-        content.push({ image: imgData, width: 300, margin: [0, 0, 0, 10] });
+    // Permanente fouten
+    const permFoto = document.querySelector('.permanenteFoto');
+    const permUitleg = document.querySelector('.permanenteUitleg').value;
+    if (permUitleg || permFoto.files.length) {
+        let blok = [];
+        if (permUitleg) blok.push({ text: permUitleg, bold: true, fontSize: 13, margin: [0, 0, 0, 5] });
+        if (permFoto.files.length) blok.push({ image: await toDataURL(permFoto.files[0]), width: 300 });
+        content.push({ stack: blok, margin: [0, 10, 0, 10] });
     }
 
-    // dynamische foto secties
-    const secties = document.querySelectorAll('#fotoSecties .fotoSectie');
+    // Foto secties
+    const secties = document.querySelectorAll('#fotoSecties .foto-sectie');
     for (const sectie of secties) {
         const uitleg = sectie.querySelector('textarea').value;
         const fileInput = sectie.querySelector('input[type="file"]');
-        if (uitleg) {
-            content.push({ text: uitleg, margin: [0, 5, 0, 5] });
-        }
-        if (fileInput.files.length) {
-            const imgData = await toDataURL(fileInput.files[0]);
-            content.push({ image: imgData, width: 300, margin: [0, 0, 0, 10] });
+        if (uitleg || fileInput.files.length) {
+            let blok = [];
+            if (uitleg) blok.push({ text: uitleg, bold: true, fontSize: 13, margin: [0, 0, 0, 5] });
+            if (fileInput.files.length) blok.push({ image: await toDataURL(fileInput.files[0]), width: 300 });
+            content.push({ stack: blok, margin: [0, 10, 0, 10] });
         }
     }
 
-    // PDF maken
     const docDefinition = {
         content,
-        pageMargins: [40, 60, 40, 60]
+        pageMargins: [40, 90, 40, 60],
+        header: (currentPage, pageCount) => ({
+            margin: [40, 20, 40, 20],
+            table: {
+                widths: ['*', 'auto'],
+                body: [[
+                    { text: 'DOA-DIAGNOSTICS DIAGNOSE VERSLAG', color: 'white', fillColor: '#42b0e5', bold: true, fontSize: 14, alignment: 'left', margin: [5,5,5,5] },
+                    logoBase64 ? { image: logoBase64, width: 50, alignment: 'right' } : {}
+                ]]
+            },
+            layout: 'noBorders'
+        })
     };
 
-    // detecteer mobiel vs desktop
-    if (/Mobi|Android/i.test(navigator.userAgent)) {
-        pdfMake.createPdf(docDefinition).open();
-    } else {
-        pdfMake.createPdf(docDefinition).download('diagnose-verslag.pdf');
-    }
+    /Mobi|Android/i.test(navigator.userAgent)
+        ? pdfMake.createPdf(docDefinition).open()
+        : pdfMake.createPdf(docDefinition).download('diagnose-verslag.pdf');
 });
 
 function toDataURL(file) {
