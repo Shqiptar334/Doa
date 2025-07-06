@@ -11,7 +11,6 @@
       background: #f4f4f4;
     }
     h1 {
-      text-align: left;
       font-size: 22px;
     }
     label {
@@ -176,8 +175,8 @@
 
     section.appendChild(button);
     section.appendChild(fileInput);
-    section.appendChild(preview);
     section.appendChild(uitleg);
+    section.appendChild(preview);
     return section;
   }
 
@@ -221,14 +220,18 @@
       }
     }
 
-    addHeader();
-
-    const addText = (label, value) => {
-      if (y > 270) {
+    function addPageIfNeeded(extraHeight = 20) {
+      if (y + extraHeight > 270) {
         pdf.addPage();
         addHeader();
         y = 40;
       }
+    }
+
+    addHeader();
+
+    const addText = (label, value) => {
+      addPageIfNeeded(10);
       pdf.setTextColor(0);
       pdf.setFontSize(12);
       pdf.text(`${label}: ${value}`, 10, y);
@@ -237,11 +240,7 @@
 
     const addMultilineText = (label, text) => {
       const lines = pdf.splitTextToSize(`${label}: ${text}`, 180);
-      if (y + lines.length * 10 > 270) {
-        pdf.addPage();
-        addHeader();
-        y = 40;
-      }
+      addPageIfNeeded(lines.length * 10);
       pdf.text(lines, 10, y);
       y += lines.length * 10;
     };
@@ -252,75 +251,48 @@
     addText("Merk / Type", document.getElementById('merk').value);
     addText("VIN", document.getElementById('vin').value);
     addText("Kilometerstand", document.getElementById('kmstand').value);
-
     addMultilineText("Klachtomschrijving", document.getElementById('klacht').value);
     addMultilineText("Analyse van de permanent fouten", document.getElementById('fouten').value);
     addMultilineText("Diagnose en Analyse", document.getElementById('diagnose').value);
 
-    const analyseImg = document.getElementById("analyse-preview");
-    const analyseUitleg = document.getElementById("analyse-uitleg").value;
-    if (analyseImg.src && analyseImg.style.display !== "none") {
-      const analyseLines = pdf.splitTextToSize(`Foto bij Analyse: ${analyseUitleg}`, 180);
-      pdf.text(analyseLines, 10, y);
-      y += analyseLines.length * 10;
-
-      const canvas = document.createElement('canvas');
-      canvas.width = analyseImg.naturalWidth;
-      canvas.height = analyseImg.naturalHeight;
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(analyseImg, 0, 0);
-      const dataUrl = canvas.toDataURL('image/jpeg');
-
-      let imgWidth = 180;
-      let imgHeight = (imgWidth / analyseImg.naturalWidth) * analyseImg.naturalHeight;
-
-      if (y + imgHeight > 280) {
-        pdf.addPage();
-        addHeader();
-        y = 40;
-      }
-
-      pdf.addImage(dataUrl, 'JPEG', 10, y, imgWidth, imgHeight);
-      y += imgHeight + 10;
-    }
-
-    for (let i = 0; i < photoCount; i++) {
-      const img = document.getElementById(`preview-${i}`);
-      const uitleg = document.getElementById(`uitleg-${i}`).value;
-      if (img && img.src && img.style.display !== 'none') {
-        const lines = pdf.splitTextToSize(`Foto ${i + 1}: ${uitleg}`, 180);
-        if (y + lines.length * 10 > 270) {
-          pdf.addPage();
-          addHeader();
-          y = 40;
-        }
-        pdf.text(lines, 10, y);
-        y += lines.length * 10;
+    async function addImageWithText(imgElement, uitlegText, fotonaam) {
+      if (imgElement.src && imgElement.style.display !== "none") {
+        const uitlegLines = pdf.splitTextToSize(`${fotonaam}: ${uitlegText}`, 180);
+        addPageIfNeeded(uitlegLines.length * 10 + 80);
+        pdf.text(uitlegLines, 10, y);
+        y += uitlegLines.length * 10;
 
         const canvas = document.createElement('canvas');
-        canvas.width = img.naturalWidth;
-        canvas.height = img.naturalHeight;
+        canvas.width = imgElement.naturalWidth;
+        canvas.height = imgElement.naturalHeight;
         const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0);
+        ctx.drawImage(imgElement, 0, 0);
         const dataUrl = canvas.toDataURL('image/jpeg');
 
-        let imgWidth = 180;
-        let imgHeight = (imgWidth / img.naturalWidth) * img.naturalHeight;
-
-        if (y + imgHeight > 280) {
-          pdf.addPage();
-          addHeader();
-          y = 40;
-        }
-
-        pdf.addImage(dataUrl, 'JPEG', 10, y, imgWidth, imgHeight);
+        const maxWidth = 180;
+        const scale = maxWidth / imgElement.naturalWidth;
+        const imgHeight = imgElement.naturalHeight * scale;
+        pdf.addImage(dataUrl, 'JPEG', 10, y, maxWidth, imgHeight);
         y += imgHeight + 10;
       }
+    }
+
+    await addImageWithText(
+      document.getElementById("analyse-preview"),
+      document.getElementById("analyse-uitleg").value,
+      "Foto Analyse"
+    );
+
+    for (let i = 0; i < photoCount; i++) {
+      await addImageWithText(
+        document.getElementById(`preview-${i}`),
+        document.getElementById(`uitleg-${i}`).value,
+        `Foto ${i + 1}`
+      );
     }
 
     pdf.save("diagnoseverslag.pdf");
   };
 </script>
-
 </body>
 </html>
