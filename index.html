@@ -11,10 +11,14 @@
       background: #f4f4f4;
     }
     h1 {
-      text-align: center;
+      text-align: left;
+      font-size: 22px;
     }
-
-    
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 10px;
+    }
     input, textarea {
       width: 100%;
       padding: 8px;
@@ -93,12 +97,12 @@
 <label>Diagnose:</label>
 <textarea id="diagnose" rows="5"></textarea>
 
-<h2>Zie hieronder verdere toelichting/</h2>
 
 <label>Verklaring van opdrachtgever:</label>
 <textarea id="fouten" rows="5"></textarea>
 
-<!-- Foto bij Analyse met uitleg en upload -->
+
+
 <div class="photo-section">
   <label>Analyse van de permanent fouten</label>
   <button class="btn-add-photo" onclick="document.getElementById('analyse-foto').click()">📷 Voeg foto toe</button>
@@ -119,7 +123,6 @@
   const { jsPDF } = window.jspdf;
   let photoCount = 0;
 
-  // Analyse foto preview
   document.getElementById("analyse-foto").addEventListener("change", function () {
     const file = this.files[0];
     if (file) {
@@ -235,13 +238,6 @@
       y += 10;
     };
 
-    addText("Opdrachtgever", document.getElementById('klant').value);
-    addText("Datum", document.getElementById('datum').value);
-    addText("Kenteken", document.getElementById('kenteken').value);
-    addText("Merk / Type", document.getElementById('merk').value);
-    addText("VIN", document.getElementById('vin').value);
-    addText("Kilometerstand", document.getElementById('kmstand').value);
-
     const addMultilineText = (label, text) => {
       const lines = pdf.splitTextToSize(`${label}: ${text}`, 180);
       if (y + lines.length * 10 > 270) {
@@ -253,32 +249,49 @@
       y += lines.length * 10;
     };
 
+    addText("Opdrachtgever", document.getElementById('klant').value);
+    addText("Datum", document.getElementById('datum').value);
+    addText("Kenteken", document.getElementById('kenteken').value);
+    addText("Merk / Type", document.getElementById('merk').value);
+    addText("VIN", document.getElementById('vin').value);
+    addText("Kilometerstand", document.getElementById('kmstand').value);
+
     addMultilineText("Klachtomschrijving", document.getElementById('klacht').value);
     addMultilineText("Analyse van de permanent fouten", document.getElementById('fouten').value);
     addMultilineText("Diagnose en Analyse", document.getElementById('diagnose').value);
 
-    // Foto bij Analyse
     const analyseImg = document.getElementById("analyse-preview");
     const analyseUitleg = document.getElementById("analyse-uitleg").value;
     if (analyseImg.src && analyseImg.style.display !== "none") {
+      const analyseLines = pdf.splitTextToSize(`Foto bij Analyse: ${analyseUitleg}`, 180);
+      pdf.text(analyseLines, 10, y);
+      y += analyseLines.length * 10;
+
       const canvas = document.createElement('canvas');
       canvas.width = analyseImg.naturalWidth;
       canvas.height = analyseImg.naturalHeight;
       const ctx = canvas.getContext('2d');
       ctx.drawImage(analyseImg, 0, 0);
       const dataUrl = canvas.toDataURL('image/jpeg');
-      pdf.text(`Foto bij Analyse: ${analyseUitleg}`, 10, y);
-      y += 5;
+
       const imgHeight = (180 / analyseImg.naturalWidth) * analyseImg.naturalHeight;
       pdf.addImage(dataUrl, 'JPEG', 10, y, 180, imgHeight);
       y += imgHeight + 10;
     }
 
-    // Andere foto's
     for (let i = 0; i < photoCount; i++) {
       const img = document.getElementById(`preview-${i}`);
       const uitleg = document.getElementById(`uitleg-${i}`).value;
       if (img && img.src && img.style.display !== 'none') {
+        const lines = pdf.splitTextToSize(`Foto ${i + 1}: ${uitleg}`, 180);
+        if (y + lines.length * 10 > 270) {
+          pdf.addPage();
+          addHeader();
+          y = 40;
+        }
+        pdf.text(lines, 10, y);
+        y += lines.length * 10;
+
         const canvas = document.createElement('canvas');
         canvas.width = img.naturalWidth;
         canvas.height = img.naturalHeight;
@@ -286,13 +299,6 @@
         ctx.drawImage(img, 0, 0);
         const dataUrl = canvas.toDataURL('image/jpeg');
 
-        if (y > 200) {
-          pdf.addPage();
-          addHeader();
-          y = 40;
-        }
-        pdf.text(`Foto ${i + 1}: ${uitleg}`, 10, y);
-        y += 5;
         const imgHeight = (180 / img.naturalWidth) * img.naturalHeight;
         pdf.addImage(dataUrl, 'JPEG', 10, y, 180, imgHeight);
         y += imgHeight + 10;
