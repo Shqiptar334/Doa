@@ -3,13 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <title>DOA Diagnoseverslag</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
   <style>
+    * { box-sizing: border-box; }
     body {
       font-family: Arial, sans-serif;
       margin: 0;
+      background-color: #fff;
+      color: #000;
     }
-
     header {
       background-color: #42B0E5;
       color: white;
@@ -17,195 +19,151 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      position: sticky;
-      top: 0;
     }
-
+    header h1 {
+      font-size: 20px;
+      margin: 0;
+    }
     header img {
       height: 50px;
+      object-fit: contain;
     }
-
-    h1 {
-      margin: 0;
-      font-size: 20px;
-    }
-
     main {
       padding: 30px;
     }
-
     label {
-      display: block;
       font-weight: bold;
+      display: block;
       margin-top: 20px;
       font-size: 18px;
     }
-
     input[type="text"], textarea {
       width: 100%;
-      padding: 10px;
+      padding: 12px;
       margin-top: 5px;
       font-size: 16px;
-      box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 4px;
     }
-
     textarea {
-      height: 100px;
       resize: vertical;
+      min-height: 100px;
     }
-
     .photo-section {
       margin-top: 30px;
-      border-top: 1px solid #ccc;
       padding-top: 20px;
+      border-top: 1px solid #ddd;
     }
-
-    .photo-input {
+    .photo-section input[type="file"] {
+      margin-top: 10px;
+      display: block;
+    }
+    .photo-section textarea {
       margin-top: 10px;
     }
-
-    .photo-input input {
-      display: block;
-      margin-bottom: 10px;
-    }
-
-    .add-section-btn {
-      margin-top: 30px;
+    .add-section-btn, .pdf-btn {
+      margin-top: 40px;
       background-color: #42B0E5;
       color: white;
-      padding: 12px 20px;
-      font-size: 16px;
       border: none;
-      cursor: pointer;
-    }
-
-    .add-section-btn:hover {
-      background-color: #379cd0;
-    }
-
-    .generate-btn {
-      margin-top: 40px;
-      background-color: #28a745;
-      color: white;
-      padding: 12px 20px;
+      padding: 15px 25px;
       font-size: 16px;
-      border: none;
       cursor: pointer;
+      border-radius: 5px;
     }
-
-    .generate-btn:hover {
-      background-color: #218838;
+    .add-section-btn:hover, .pdf-btn:hover {
+      background-color: #3594c3;
     }
   </style>
 </head>
 <body>
 
-  <header>
-    <h1>DOA-DIAGNOSTICS DIAGNOSE VERSLAG</h1>
-    <img src="IMG_1971.png" alt="DOA Logo">
-  </header>
+  <div id="rapport">
+    <header>
+      <h1>DOA-DIAGNOSTICS DIAGNOSE VERSLAG</h1>
+      <img src="IMG_1971.png" alt="Logo">
+    </header>
 
-  <main id="verslag">
-    <label for="opdrachtgever">Opdrachtgever</label>
-    <input type="text" id="opdrachtgever" name="opdrachtgever">
+    <main>
+      <label for="opdrachtgever">Opdrachtgever</label>
+      <input type="text" id="opdrachtgever" name="opdrachtgever">
 
-    <label for="kenteken">Kenteken</label>
-    <input type="text" id="kenteken" name="kenteken">
+      <label for="kenteken">Kenteken</label>
+      <input type="text" id="kenteken" name="kenteken">
 
-    <label for="merk">Merk / Type</label>
-    <input type="text" id="merk" name="merk">
+      <label for="merk">Merk / Type</label>
+      <input type="text" id="merk" name="merk">
 
-    <label for="bouwjaar">Bouwjaar</label>
-    <input type="text" id="bouwjaar" name="bouwjaar">
+      <label for="bouwjaar">Bouwjaar</label>
+      <input type="text" id="bouwjaar" name="bouwjaar">
 
-    <label for="kmstand">Km-stand</label>
-    <input type="text" id="kmstand" name="kmstand">
+      <label for="kmstand">Km-stand</label>
+      <input type="text" id="kmstand" name="kmstand">
 
-    <label for="vin">VIN</label>
-    <input type="text" id="vin" name="vin">
+      <label for="vin">VIN</label>
+      <input type="text" id="vin" name="vin">
 
-    <label for="motorcode">Motorcode</label>
-    <input type="text" id="motorcode" name="motorcode">
+      <label for="motorcode">Motorcode</label>
+      <input type="text" id="motorcode" name="motorcode">
 
-    <label for="klacht">Klachtomschrijving</label>
-    <textarea id="klacht" name="klacht"></textarea>
+      <label for="klacht">Klachtomschrijving</label>
+      <textarea id="klacht" name="klacht"></textarea>
 
-    <label for="diagnose">Diagnose</label>
-    <textarea id="diagnose" name="diagnose"></textarea>
+      <label for="diagnose">Diagnose</label>
+      <textarea id="diagnose" name="diagnose"></textarea>
 
-    <label for="analyse">Analyse van de permanent fouten</label>
-    <textarea id="analyse" name="analyse"></textarea>
+      <label for="analyse">Analyse van de permanent fouten</label>
+      <textarea id="analyse" name="analyse"></textarea>
 
-    <div class="photo-input">
-      <label>Foto toevoegen bij Analyse</label>
-      <input type="file" accept="image/*">
-      <textarea placeholder="Uitleg bij de foto"></textarea>
-    </div>
-
-    <div id="photoSections">
       <div class="photo-section">
-        <label>Foto 1</label>
+        <label>Foto bij Analyse</label>
         <input type="file" accept="image/*">
-        <textarea placeholder="Uitleg bij foto 1"></textarea>
+        <textarea placeholder="Uitleg bij de foto van de analyse..."></textarea>
       </div>
-      <div class="photo-section">
-        <label>Foto 2</label>
-        <input type="file" accept="image/*">
-        <textarea placeholder="Uitleg bij foto 2"></textarea>
+
+      <div id="photoSections">
+        <div class="photo-section">
+          <label>Foto 1</label>
+          <input type="file" accept="image/*">
+          <textarea placeholder="Uitleg bij foto 1..."></textarea>
+        </div>
+        <div class="photo-section">
+          <label>Foto 2</label>
+          <input type="file" accept="image/*">
+          <textarea placeholder="Uitleg bij foto 2..."></textarea>
+        </div>
       </div>
-    </div>
 
-    <button class="add-section-btn" onclick="addPhotoSection()">Voeg een nieuwe sectie toe</button>
-
-    <button class="generate-btn" onclick="generatePDF()">Genereer PDF</button>
-  </main>
+      <button class="add-section-btn" onclick="addPhotoSection()">Voeg een nieuwe sectie toe</button>
+      <button class="pdf-btn" onclick="genereerPDF()">Genereer PDF</button>
+    </main>
+  </div>
 
   <script>
     function addPhotoSection() {
       const container = document.getElementById("photoSections");
       for (let i = 0; i < 2; i++) {
-        const section = document.createElement("div");
-        section.className = "photo-section";
-        section.innerHTML = `
+        const div = document.createElement("div");
+        div.className = "photo-section";
+        div.innerHTML = `
           <label>Foto</label>
           <input type="file" accept="image/*">
-          <textarea placeholder="Uitleg bij de foto"></textarea>
+          <textarea placeholder="Uitleg bij de foto..."></textarea>
         `;
-        container.appendChild(section);
+        container.appendChild(div);
       }
     }
 
-    async function generatePDF() {
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF();
-
-      const veld = (id, label) => {
-        const val = document.getElementById(id).value;
-        return `${label}: ${val}`;
+    function genereerPDF() {
+      const element = document.getElementById("rapport");
+      const opt = {
+        margin: 0.5,
+        filename: 'DOA-diagnoseverslag.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
       };
-
-      const tekst = [
-        veld("opdrachtgever", "Opdrachtgever"),
-        veld("kenteken", "Kenteken"),
-        veld("merk", "Merk / Type"),
-        veld("bouwjaar", "Bouwjaar"),
-        veld("kmstand", "Km-stand"),
-        veld("vin", "VIN"),
-        veld("motorcode", "Motorcode"),
-        "",
-        "Klachtomschrijving:",
-        document.getElementById("klacht").value,
-        "",
-        "Diagnose:",
-        document.getElementById("diagnose").value,
-        "",
-        "Analyse van de permanent fouten:",
-        document.getElementById("analyse").value
-      ];
-
-      const lines = doc.splitTextToSize(tekst.join("\n"), 180);
-      doc.text(lines, 10, 10);
-      doc.save("DOA_Diagnoseverslag.pdf");
+      html2pdf().set(opt).from(element).save();
     }
   </script>
 
