@@ -9,7 +9,7 @@
         body {
             background-color: white;
         }
-        .header {
+        .header, .pdf-header {
             background-color: #42b0e5;
             color: white;
             padding: 15px;
@@ -17,94 +17,105 @@
             justify-content: space-between;
             align-items: center;
         }
-        .header img {
+        .header img, .pdf-header img {
             height: 50px;
+        }
+        .foto-preview {
+            max-width: 100%;
+            height: auto;
+            margin-top: 5px;
+            border: 1px solid #ddd;
+            padding: 2px;
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h4>DOA-DIAGNOSTICS DIAGNOSE VERSLAG</h4>
-        <img src="IMG_1971.png" alt="Logo">
-    </div>
-
-    <div class="container my-4" id="verslag">
-        <div class="mb-3">
-            <label class="form-label">Opdrachtgever:</label>
-            <input type="text" class="form-control">
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Datum:</label>
-            <input type="date" class="form-control">
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Kenteken:</label>
-            <input type="text" class="form-control">
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Merk / Type:</label>
-            <input type="text" class="form-control">
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Bouwjaar:</label>
-            <input type="text" class="form-control">
-        </div>
-        <div class="mb-3">
-            <label class="form-label">VIN:</label>
-            <input type="text" class="form-control">
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Motorcode:</label>
-            <input type="text" class="form-control">
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Kilometerstand:</label>
-            <input type="text" class="form-control">
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Klachtomschrijving:</label>
-            <textarea class="form-control" rows="3"></textarea>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Diagnose:</label>
-            <textarea class="form-control" rows="4"></textarea>
+    <div id="verslag">
+        <div class="pdf-header">
+            <h4>DOA-DIAGNOSTICS DIAGNOSE VERSLAG</h4>
+            <img src="IMG_1971.png" alt="Logo">
         </div>
 
-        <!-- FOTO SECTIES -->
-        <div class="my-4" id="foto-secties">
+        <div class="container my-4">
+            <div class="mb-3">
+                <label class="form-label">Opdrachtgever:</label>
+                <input type="text" class="form-control">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Datum:</label>
+                <input type="date" class="form-control">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Kenteken:</label>
+                <input type="text" class="form-control">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Merk / Type:</label>
+                <input type="text" class="form-control">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Bouwjaar:</label>
+                <input type="text" class="form-control">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">VIN:</label>
+                <input type="text" class="form-control">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Motorcode:</label>
+                <input type="text" class="form-control">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Kilometerstand:</label>
+                <input type="text" class="form-control">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Klachtomschrijving:</label>
+                <textarea class="form-control" rows="3"></textarea>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Diagnose:</label>
+                <textarea class="form-control" rows="4"></textarea>
+            </div>
+
             <!-- Analyse permanente fouten -->
             <div class="mb-4">
                 <label class="form-label fw-bold">Analyse van de permanente fouten:</label>
                 <textarea class="form-control mb-2" rows="3"></textarea>
-                <input type="file" accept="image/*" class="form-control">
+                <input type="file" accept="image/*" class="form-control image-input">
+                <img class="foto-preview">
             </div>
 
             <!-- Twee standaard foto vakken -->
-            <div class="row mb-3">
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">Uitleg bij Foto 1:</label>
-                    <textarea class="form-control mb-2" rows="3"></textarea>
-                    <input type="file" accept="image/*" class="form-control">
-                </div>
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">Uitleg bij Foto 2:</label>
-                    <textarea class="form-control mb-2" rows="3"></textarea>
-                    <input type="file" accept="image/*" class="form-control">
+            <div id="foto-secties">
+                <div class="row mb-3">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Uitleg bij Foto 1:</label>
+                        <textarea class="form-control mb-2" rows="3"></textarea>
+                        <input type="file" accept="image/*" class="form-control image-input">
+                        <img class="foto-preview">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Uitleg bij Foto 2:</label>
+                        <textarea class="form-control mb-2" rows="3"></textarea>
+                        <input type="file" accept="image/*" class="form-control image-input">
+                        <img class="foto-preview">
+                    </div>
                 </div>
             </div>
 
             <button id="add-section-btn" class="btn btn-secondary mb-4">Voeg een nieuwe sectie toe</button>
-        </div>
 
-        <!-- PDF knop helemaal onderaan -->
-        <button class="btn btn-primary mb-5" id="download-pdf">Genereer PDF</button>
+            <!-- PDF knop helemaal onderaan -->
+            <button class="btn btn-primary mb-5" id="download-pdf">Genereer PDF</button>
+        </div>
     </div>
 
     <!-- html2pdf library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
     <script>
-        // Voeg dynamisch extra foto secties toe
+        // Dynamisch nieuwe secties toevoegen
         const fotoSecties = document.getElementById('foto-secties');
         const addSectionBtn = document.getElementById('add-section-btn');
 
@@ -112,7 +123,7 @@
             const newRow = document.createElement('div');
             newRow.className = 'row mb-3';
 
-            for(let i = 0; i < 2; i++) {
+            for (let i = 0; i < 2; i++) {
                 const col = document.createElement('div');
                 col.className = 'col-md-6 mb-3';
 
@@ -127,27 +138,63 @@
                 const inputFile = document.createElement('input');
                 inputFile.type = 'file';
                 inputFile.accept = 'image/*';
-                inputFile.className = 'form-control';
+                inputFile.className = 'form-control image-input';
+
+                const imgPreview = document.createElement('img');
+                imgPreview.className = 'foto-preview';
+
+                inputFile.addEventListener('change', function() {
+                    if (this.files && this.files[0]) {
+                        const reader = new FileReader();
+                        reader.onload = e => imgPreview.src = e.target.result;
+                        reader.readAsDataURL(this.files[0]);
+                    }
+                });
 
                 col.appendChild(label);
                 col.appendChild(textarea);
                 col.appendChild(inputFile);
+                col.appendChild(imgPreview);
 
                 newRow.appendChild(col);
             }
 
-            fotoSecties.insertBefore(newRow, addSectionBtn);
+            fotoSecties.appendChild(newRow);
         });
 
-        // PDF genereren (werkt ook op mobiel)
+        // Direct tonen van geselecteerde afbeeldingen
+        document.addEventListener('change', function(e) {
+            if(e.target.classList.contains('image-input')) {
+                const img = e.target.nextElementSibling;
+                if (e.target.files && e.target.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = ev => img.src = ev.target.result;
+                    reader.readAsDataURL(e.target.files[0]);
+                }
+            }
+        });
+
+        // PDF genereren met header op elke pagina
         document.getElementById('download-pdf').addEventListener('click', () => {
             const element = document.getElementById('verslag');
             html2pdf().from(element).set({
-                margin: 0.5,
+                margin: [0.5,0.5,0.5,0.5],
                 filename: 'diagnose-verslag.pdf',
                 image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2 },
-                jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+                html2canvas: { scale: 2, useCORS: true },
+                jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' },
+                pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+            }).toPdf().get('pdf').then(function(pdf) {
+                const totalPages = pdf.internal.getNumberOfPages();
+                for (let i = 1; i <= totalPages; i++) {
+                    pdf.setPage(i);
+                    pdf.setFillColor(66, 176, 229);
+                    pdf.rect(0,0,pdf.internal.pageSize.getWidth(), 30, 'F');
+                    pdf.setTextColor(255,255,255);
+                    pdf.setFontSize(12);
+                    pdf.text('DOA-DIAGNOSTICS DIAGNOSE VERSLAG', 15, 20);
+                    pdf.addImage('IMG_1971.png', 'PNG', pdf.internal.pageSize.getWidth() - 50, 10, 30, 10);
+                }
             }).save();
         });
     </script>
