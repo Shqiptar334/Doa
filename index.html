@@ -11,6 +11,7 @@
       background: #f4f4f4;
     }
     h1 {
+      text-align: left;
       font-size: 22px;
     }
     label {
@@ -83,17 +84,9 @@
 
 <label>Merk / Type:</label>
 <input type="text" id="merk">
-  
-  <label>Bouwjaar:</label>
-<input type="text" id="jaar">
-
 
 <label>VIN:</label>
 <input type="text" id="vin">
-  
-  <label>motorcode:</label>
-<input type="text" id="motorcode">
-
 
 <label>Kilometerstand:</label>
 <input type="text" id="kmstand">
@@ -228,18 +221,14 @@
       }
     }
 
-    function addPageIfNeeded(extraHeight = 20) {
-      if (y + extraHeight > 270) {
+    addHeader();
+
+    const addText = (label, value) => {
+      if (y > 270) {
         pdf.addPage();
         addHeader();
         y = 40;
       }
-    }
-
-    addHeader();
-
-    const addText = (label, value) => {
-      addPageIfNeeded(10);
       pdf.setTextColor(0);
       pdf.setFontSize(12);
       pdf.text(`${label}: ${value}`, 10, y);
@@ -248,7 +237,11 @@
 
     const addMultilineText = (label, text) => {
       const lines = pdf.splitTextToSize(`${label}: ${text}`, 180);
-      addPageIfNeeded(lines.length * 10);
+      if (y + lines.length * 10 > 270) {
+        pdf.addPage();
+        addHeader();
+        y = 40;
+      }
       pdf.text(lines, 10, y);
       y += lines.length * 10;
     };
@@ -259,48 +252,53 @@
     addText("Merk / Type", document.getElementById('merk').value);
     addText("VIN", document.getElementById('vin').value);
     addText("Kilometerstand", document.getElementById('kmstand').value);
+
     addMultilineText("Klachtomschrijving", document.getElementById('klacht').value);
     addMultilineText("Analyse van de permanent fouten", document.getElementById('fouten').value);
     addMultilineText("Diagnose en Analyse", document.getElementById('diagnose').value);
 
-    async function addImageWithText(imgElement, uitlegText, fotonaam) {
-      if (imgElement.src && imgElement.style.display !== "none") {
-        const uitlegLines = pdf.splitTextToSize(`${fotonaam}: ${uitlegText}`, 180);
-        addPageIfNeeded(uitlegLines.length * 10 + 80);
-        pdf.text(uitlegLines, 10, y);
-        y += uitlegLines.length * 10;
-
-        const canvas = document.createElement('canvas');
-        canvas.width = imgElement.naturalWidth;
-        canvas.height = imgElement.naturalHeight;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(imgElement, 0, 0);
-        const dataUrl = canvas.toDataURL('image/jpeg');
-
-        const maxWidth = 180;
-        const scale = maxWidth / imgElement.naturalWidth;
-        const imgHeight = imgElement.naturalHeight * scale;
-        pdf.addImage(dataUrl, 'JPEG', 10, y, maxWidth, imgHeight);
-        y += imgHeight + 10;
+    async function addImageWithUitleg(img, uitlegText) {
+      const lines = pdf.splitTextToSize(uitlegText, 180);
+      if (y + lines.length * 10 > 270) {
+        pdf.addPage(); addHeader(); y = 40;
       }
+      pdf.text(lines, 10, y);
+      y += lines.length * 10;
+
+      const canvas = document.createElement('canvas');
+      canvas.width = img.naturalWidth;
+      canvas.height = img.naturalHeight;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0);
+      const dataUrl = canvas.toDataURL('image/jpeg');
+
+      let imgWidth = 180;
+      let imgHeight = (imgWidth / img.naturalWidth) * img.naturalHeight;
+      if (y + imgHeight > 270) {
+        pdf.addPage(); addHeader(); y = 40;
+      }
+
+      pdf.addImage(dataUrl, 'JPEG', 10, y, imgWidth, imgHeight);
+      y += imgHeight + 10;
     }
 
-    await addImageWithText(
-      document.getElementById("analyse-preview"),
-      document.getElementById("analyse-uitleg").value,
-      "Foto Analyse"
-    );
+    const analyseImg = document.getElementById("analyse-preview");
+    const analyseUitleg = document.getElementById("analyse-uitleg").value;
+    if (analyseImg.src && analyseImg.style.display !== "none") {
+      await addImageWithUitleg(analyseImg, `Foto bij Analyse: ${analyseUitleg}`);
+    }
 
     for (let i = 0; i < photoCount; i++) {
-      await addImageWithText(
-        document.getElementById(`preview-${i}`),
-        document.getElementById(`uitleg-${i}`).value,
-        `Foto ${i + 1}`
-      );
+      const img = document.getElementById(`preview-${i}`);
+      const uitleg = document.getElementById(`uitleg-${i}`).value;
+      if (img && img.src && img.style.display !== 'none') {
+        await addImageWithUitleg(img, `Foto ${i + 1}: ${uitleg}`);
+      }
     }
 
     pdf.save("diagnoseverslag.pdf");
   };
 </script>
+
 </body>
 </html>
