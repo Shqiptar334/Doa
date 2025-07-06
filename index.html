@@ -98,11 +98,15 @@
 
 <label>Diagnose en Analyse:</label>
 <textarea id="diagnose" rows="5"></textarea>
-  <div class="photo-section">
-      <label>Foto bij Analyse</label>
-      <input type="file" accept="image/*">
-      <textarea placeholder="Uitleg bij de foto van de analyse..."></textarea>
-    </div>
+
+<!-- Foto bij Analyse met uitleg en upload -->
+<div class="photo-section">
+  <label>Foto bij Analyse</label>
+  <button class="btn-add-photo" onclick="document.getElementById('analyse-foto').click()">📷 Voeg foto toe</button>
+  <input type="file" accept="image/*" id="analyse-foto">
+  <img id="analyse-preview" style="display:none;">
+  <textarea id="analyse-uitleg" placeholder="Uitleg bij de foto van de analyse..." rows="3"></textarea>
+</div>
 
 <div id="photos-container"></div>
 
@@ -115,6 +119,20 @@
 <script>
   const { jsPDF } = window.jspdf;
   let photoCount = 0;
+
+  // Analyse foto preview
+  document.getElementById("analyse-foto").addEventListener("change", function () {
+    const file = this.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const preview = document.getElementById("analyse-preview");
+        preview.src = e.target.result;
+        preview.style.display = "block";
+      };
+      reader.readAsDataURL(file);
+    }
+  });
 
   function createPhotoSection(index) {
     const section = document.createElement('div');
@@ -174,7 +192,6 @@
   }
 
   addTwoSections();
-
   document.getElementById('add-section').onclick = addTwoSections;
 
   document.getElementById('generate').onclick = async () => {
@@ -226,10 +243,6 @@
     addText("VIN", document.getElementById('vin').value);
     addText("Kilometerstand", document.getElementById('kmstand').value);
 
-    const klacht = document.getElementById('klacht').value;
-    const fouten = document.getElementById('fouten').value;
-    const diagnose = document.getElementById('diagnose').value;
-
     const addMultilineText = (label, text) => {
       const lines = pdf.splitTextToSize(`${label}: ${text}`, 180);
       if (y + lines.length * 10 > 270) {
@@ -241,10 +254,28 @@
       y += lines.length * 10;
     };
 
-    addMultilineText("Klachtomschrijving", klacht);
-    addMultilineText("Analyse van de permanent fouten", fouten);
-    addMultilineText("Diagnose en Analyse", diagnose);
+    addMultilineText("Klachtomschrijving", document.getElementById('klacht').value);
+    addMultilineText("Analyse van de permanent fouten", document.getElementById('fouten').value);
+    addMultilineText("Diagnose en Analyse", document.getElementById('diagnose').value);
 
+    // Foto bij Analyse
+    const analyseImg = document.getElementById("analyse-preview");
+    const analyseUitleg = document.getElementById("analyse-uitleg").value;
+    if (analyseImg.src && analyseImg.style.display !== "none") {
+      const canvas = document.createElement('canvas');
+      canvas.width = analyseImg.naturalWidth;
+      canvas.height = analyseImg.naturalHeight;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(analyseImg, 0, 0);
+      const dataUrl = canvas.toDataURL('image/jpeg');
+      pdf.text(`Foto bij Analyse: ${analyseUitleg}`, 10, y);
+      y += 5;
+      const imgHeight = (180 / analyseImg.naturalWidth) * analyseImg.naturalHeight;
+      pdf.addImage(dataUrl, 'JPEG', 10, y, 180, imgHeight);
+      y += imgHeight + 10;
+    }
+
+    // Andere foto's
     for (let i = 0; i < photoCount; i++) {
       const img = document.getElementById(`preview-${i}`);
       const uitleg = document.getElementById(`uitleg-${i}`).value;
