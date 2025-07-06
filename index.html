@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>DOA Diagnoseverslag PDF Generator</title>
-
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
     body { font-family: Arial, sans-serif; margin: 20px; background:#f9f9f9; }
@@ -14,68 +13,31 @@
       width: 100%; padding: 8px; box-sizing: border-box; margin-top: 4px;
     }
     textarea { resize: vertical; }
-    .photo-section {
-      border: 1px solid #ccc; padding: 10px; margin-top: 15px; background: white;
-    }
-    .photo-section img {
-      max-width: 100%; height: auto; margin-top: 8px; display: block;
-    }
-    button#add-section {
-      margin-top: 20px; background: #5cb85c; color: white;
-      padding: 10px 15px; border: none; cursor: pointer;
-      border-radius: 4px; font-size: 16px;
-    }
-    button#generate {
-      margin-top: 30px; background: #0275d8; color: white;
-      padding: 12px 20px; border: none; cursor: pointer;
-      border-radius: 4px; font-size: 18px;
-      display: block; width: 100%; max-width: 300px; margin-left: auto; margin-right: auto;
-    }
-    #logo-preview {
-      max-width: 120px; display: block; margin: 0 auto 10px auto;
-    }
-    .btn-add-photo {
-      margin-top: 10px; padding: 8px 15px;
-      background: #337ab7; color: white; border: none;
-      border-radius: 4px; cursor: pointer;
-    }
+    .photo-section { border: 1px solid #ccc; padding: 10px; margin-top: 15px; background: white; }
+    .photo-section img { max-width: 100%; height: auto; margin-top: 8px; display: block; }
+    button#add-section { margin-top: 20px; background: #5cb85c; color: white; padding: 10px 15px; border: none; cursor: pointer; border-radius: 4px; font-size: 16px; }
+    button#generate { margin-top: 30px; background: #0275d8; color: white; padding: 12px 20px; border: none; cursor: pointer; border-radius: 4px; font-size: 18px; display: block; width: 100%; max-width: 300px; margin: 0 auto; }
+    #logo-preview { max-width: 120px; display: block; margin: 0 auto 10px auto; }
+    .btn-add-photo { margin-top: 10px; padding: 8px 15px; background: #337ab7; color: white; border: none; border-radius: 4px; cursor: pointer; }
     .hidden-file-input { display: none; }
   </style>
 </head>
 <body>
 
 <h1>DOA Diagnoseverslag PDF Generator</h1>
-
 <img id="logo-preview" src="IMG_1971.png" alt="DOA Logo">
 
-<label>Opdrachtgever:</label>
-<input type="text" id="klant" placeholder="Naam opdrachtgever" />
-
-<label>Datum:</label>
-<input type="date" id="datum" />
-
-<label>Kenteken:</label>
-<input type="text" id="kenteken" placeholder="Kenteken" />
-
-<label>Merk / Type:</label>
-<input type="text" id="merk" placeholder="Merk / Type" />
-
-<label>VIN:</label>
-<input type="text" id="vin" placeholder="VIN nummer" />
-
-<label>Kilometerstand:</label>
-<input type="text" id="kmstand" placeholder="Kilometerstand" />
-
-<label>Klachtomschrijving:</label>
-<textarea id="klacht" rows="5" placeholder="Schrijf hier de klachtomschrijving..."></textarea>
-
-<label>Diagnose en Analyse:</label>
-<textarea id="diagnose" rows="6" placeholder="Schrijf hier de diagnose en analyse..."></textarea>
+<label>Opdrachtgever:</label><input type="text" id="klant" placeholder="Naam opdrachtgever" />
+<label>Datum:</label><input type="date" id="datum" />
+<label>Kenteken:</label><input type="text" id="kenteken" placeholder="Kenteken" />
+<label>Merk / Type:</label><input type="text" id="merk" placeholder="Merk / Type" />
+<label>VIN:</label><input type="text" id="vin" placeholder="VIN nummer" />
+<label>Kilometerstand:</label><input type="text" id="kmstand" placeholder="Kilometerstand" />
+<label>Klachtomschrijving:</label><textarea id="klacht" rows="5" placeholder="Schrijf hier de klachtomschrijving..."></textarea>
+<label>Diagnose en Analyse:</label><textarea id="diagnose" rows="6" placeholder="Schrijf hier de diagnose en analyse..."></textarea>
 
 <div id="photos-container"></div>
-
 <button id="add-section">Voeg nieuwe sectie toe</button>
-
 <button id="generate">Genereer PDF</button>
 
 <script>
@@ -84,175 +46,113 @@
   const photosContainer = document.getElementById('photos-container');
 
   function createPhotoSection(index) {
-    const section = document.createElement('div');
-    section.className = 'photo-section';
-
-    const label = document.createElement('label');
-    label.textContent = `Foto ${index + 1}:`;
-    section.appendChild(label);
-
-    const fileInput = document.createElement('input');
-    fileInput.type = 'file';
-    fileInput.accept = 'image/*';
-    fileInput.className = 'hidden-file-input';
-    fileInput.id = `file-input-${index}`;
-
-    const addPhotoBtn = document.createElement('button');
-    addPhotoBtn.type = 'button';
-    addPhotoBtn.className = 'btn-add-photo';
-    addPhotoBtn.textContent = 'Voeg foto toe';
-    addPhotoBtn.onclick = () => fileInput.click();
-
-    section.appendChild(addPhotoBtn);
-    section.appendChild(fileInput);
-
-    const imgPreview = document.createElement('img');
-    imgPreview.style.display = 'none';
-    section.appendChild(imgPreview);
-
-    fileInput.onchange = () => {
-      const file = fileInput.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = e => {
-          imgPreview.src = e.target.result;
-          imgPreview.style.display = 'block';
-        };
-        reader.readAsDataURL(file);
+    const sec = document.createElement('div'); sec.className = 'photo-section';
+    const lbl = document.createElement('label'); lbl.textContent = `Foto ${index+1}:`; sec.appendChild(lbl);
+    const fi = document.createElement('input'); fi.type = 'file'; fi.accept = 'image/*'; fi.id = `file-input-${index}`; fi.className = 'hidden-file-input';
+    const btn = document.createElement('button'); btn.type = 'button'; btn.className = 'btn-add-photo'; btn.textContent = 'Voeg foto toe'; btn.onclick = () => fi.click();
+    sec.appendChild(btn); sec.appendChild(fi);
+    const img = document.createElement('img'); img.style.display = 'none'; sec.appendChild(img);
+    fi.onchange = () => {
+      const file = fi.files[0];
+      if(file){
+        const rdr = new FileReader();
+        rdr.onload = e => { img.src = e.target.result; img.style.display = 'block'; };
+        rdr.readAsDataURL(file);
       }
     };
-
-    const uitlegLabel = document.createElement('label');
-    uitlegLabel.textContent = 'Uitleg bij de foto:';
-    section.appendChild(uitlegLabel);
-
-    const uitleg = document.createElement('textarea');
-    uitleg.id = `uitleg-${index}`;
-    uitleg.rows = 3;
-    uitleg.placeholder = 'Wat is op de foto te zien?';
-    uitleg.style.width = '100%';
-    section.appendChild(uitleg);
-
-    return section;
+    const lbl2 = document.createElement('label'); lbl2.textContent = 'Uitleg bij de foto:'; sec.appendChild(lbl2);
+    const ta = document.createElement('textarea'); ta.id = `uitleg-${index}`; ta.rows = 3; ta.style.width = '100%'; sec.appendChild(ta);
+    return sec;
   }
 
-  function addTwoSections() {
-    for (let i = 0; i < 2; i++) {
-      const sec = createPhotoSection(photoCount);
-      photosContainer.appendChild(sec);
-      photoCount++;
-    }
+  function addTwo() {
+    for(let i=0;i<2;i++){ photosContainer.appendChild(createPhotoSection(photoCount)); photoCount++; }
   }
 
-  addTwoSections();
-  document.getElementById('add-section').onclick = () => {
-    addTwoSections();
-    window.scrollTo(0, document.body.scrollHeight);
-  };
+  addTwo();
+  document.getElementById('add-section').onclick = () => { addTwo(); window.scrollTo(0,document.body.scrollHeight); };
 
-  function addHeader(pdf, pageWidth) {
-    pdf.setFillColor('#42B0E5');
-    pdf.rect(0, 0, pageWidth, 30, 'F');
-    pdf.setTextColor(255);
-    pdf.setFontSize(16);
-    pdf.text("DOA-DIAGNOSTICS DIAGNOSE VERSLAG", pageWidth / 2, 20, { align: "center" });
+  async function getImageDimensions(dataUrl){
+    return new Promise(res=>{
+      const img = new Image();
+      img.onload = ()=> res({w:img.naturalWidth, h:img.naturalHeight});
+      img.src = dataUrl;
+    });
   }
 
   document.getElementById('generate').onclick = async () => {
-    const pdf = new jsPDF();
-    const pageWidth = pdf.internal.pageSize.getWidth();
-    const pageHeight = pdf.internal.pageSize.getHeight();
-    let y = 40;
+    const pdf = new jsPDF(), pw = pdf.internal.pageSize.getWidth(), ph = pdf.internal.pageSize.getHeight();
+    let y=40;
 
-    addHeader(pdf, pageWidth);
-
-    const logoImg = document.getElementById('logo-preview');
-    if (logoImg && logoImg.complete && logoImg.naturalWidth) {
-      const canvas = document.createElement('canvas');
-      canvas.width = logoImg.naturalWidth;
-      canvas.height = logoImg.naturalHeight;
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(logoImg, 0, 0);
-      const logoData = canvas.toDataURL('image/png');
-      pdf.addImage(logoData, 'PNG', 10, 5, 30, 20);
+    function header(){
+      pdf.setFillColor('#42B0E5'); pdf.rect(0,0,pw,30,'F');
+      pdf.setTextColor(255); pdf.setFontSize(16);
+      pdf.text("DOA-DIAGNOSTICS DIAGNOSE VERSLAG", pw/2,20,{align:'center'});
     }
 
-    function addTextBlock(title, text) {
-      pdf.setTextColor(0);
-      pdf.setFontSize(13);
-      if (y > pageHeight - 20) {
-        pdf.addPage();
-        y = 40;
-        addHeader(pdf, pageWidth);
-      }
-      pdf.text(title, 15, y); y += 8;
+    header();
+
+    const logo = document.getElementById('logo-preview');
+    if(logo && logo.naturalWidth){
+      const c = document.createElement('canvas'); c.width=logo.naturalWidth; c.height=logo.naturalHeight;
+      c.getContext('2d').drawImage(logo,0,0);
+      pdf.addImage(c.toDataURL(), 'PNG',10,5,30,0);
+    }
+    
+    function textBlock(t, text){
+      if(y>ph-20){ pdf.addPage(); header(); y=40; }
+      pdf.setTextColor(0).setFontSize(13).text(t,15,y); y+=8;
       pdf.setFontSize(11);
-      const lines = pdf.splitTextToSize(text, pageWidth - 30);
-      for (let line of lines) {
-        if (y > pageHeight - 20) {
-          pdf.addPage();
-          y = 40;
-          addHeader(pdf, pageWidth);
-        }
-        pdf.text(line, 15, y); y += 6;
+      const lines = pdf.splitTextToSize(text, pw-30);
+      for(let l of lines){
+        if(y>ph-20){ pdf.addPage(); header(); y=40; }
+        pdf.text(l,15,y); y+=6;
       }
-      y += 5;
+      y+=5;
     }
 
-    const klant = document.getElementById('klant').value || "-";
-    const datum = document.getElementById('datum').value || new Date().toISOString().slice(0,10);
-    const kenteken = document.getElementById('kenteken').value || "-";
-    const merk = document.getElementById('merk').value || "-";
-    const vin = document.getElementById('vin').value || "-";
-    const kmstand = document.getElementById('kmstand').value || "-";
-    const klacht = document.getElementById('klacht').value || "-";
-    const diagnose = document.getElementById('diagnose').value || "-";
+    const kl = document.getElementById('klant').value||'-',
+          dt = document.getElementById('datum').value||new Date().toISOString().slice(0,10),
+          ke = document.getElementById('kenteken').value||'-',
+          me = document.getElementById('merk').value||'-',
+          vi = document.getElementById('vin').value||'-',
+          km = document.getElementById('kmstand').value||'-',
+          klch = document.getElementById('klacht').value||'-',
+          diag = document.getElementById('diagnose').value||'-';
 
-    addTextBlock("Voertuiggegevens", `Opdrachtgever: ${klant}\nDatum: ${datum}\nKenteken: ${kenteken}\nMerk / Type: ${merk}\nVIN: ${vin}\nKilometerstand: ${kmstand}`);
-    addTextBlock("Klachtomschrijving", klacht);
-    addTextBlock("Diagnose en Analyse", diagnose);
+    textBlock("Voertuiggegevens", `Opdrachtgever: ${kl}\nDatum: ${dt}\nKenteken: ${ke}\nMerk / Type: ${me}\nVIN: ${vi}\nKilometerstand: ${km}`);
+    textBlock("Klachtomschrijving", klch);
+    textBlock("Diagnose en Analyse", diag);
 
-    for (let i = 0; i < photoCount; i++) {
-      const fileInput = document.getElementById(`file-input-${i}`);
-      const uitleg = document.getElementById(`uitleg-${i}`).value || "";
-
-      if (fileInput.files.length > 0) {
-        const file = fileInput.files[0];
-        const dataUrl = await new Promise(res => {
-          const reader = new FileReader();
-          reader.onload = e => res(e.target.result);
-          reader.readAsDataURL(file);
+    for(let i=0;i<photoCount;i++){
+      const fi = document.getElementById(`file-input-${i}`), ul = document.getElementById(`uitleg-${i}`).value||'';
+      if(fi.files.length){
+        const file = fi.files[0], dataUrl = await new Promise(r=>{
+          const rd=new FileReader(); rd.onload=e=>r(e.target.result); rd.readAsDataURL(file);
         });
-
-        if (y > pageHeight - 100) {
-          pdf.addPage();
-          y = 40;
-          addHeader(pdf, pageWidth);
-        }
-
-        pdf.setFontSize(13);
-        pdf.text(`Bewijsfoto ${i + 1}`, 15, y); y += 8;
-        pdf.addImage(dataUrl, 'JPEG', 15, y, 180, 80); y += 85;
-
-        const uitlegLines = pdf.splitTextToSize(uitleg, pageWidth - 30);
+        const dim = await getImageDimensions(dataUrl);
+        let mmW = dim.w/3.7795, mmH = dim.h/3.7795;
+        const maxW = pw-30, maxH = ph-y-30;
+        const scale = Math.min(maxW/mmW, maxH/mmH, 1);
+        mmW*=scale; mmH*=scale;
+        if(y>ph-mmH-20){ pdf.addPage(); header(); y=40; }
+        pdf.setFontSize(13).text(`Bewijsfoto ${i+1}`,15,y); y+=8;
+        pdf.addImage(dataUrl, 'JPEG',15,y,mmW,mmH); y+=mmH+5;
+        const ls = pdf.splitTextToSize(ul, pw-30);
         pdf.setFontSize(11);
-        for (let line of uitlegLines) {
-          if (y > pageHeight - 20) {
-            pdf.addPage();
-            y = 40;
-            addHeader(pdf, pageWidth);
-          }
-          pdf.text(line, 15, y); y += 6;
+        for(let l of ls){
+          if(y>ph-20){ pdf.addPage(); header(); y=40; }
+          pdf.text(l,15,y); y+=6;
         }
-        y += 5;
+        y+=5;
       }
     }
 
-    const klantSafe = klant.replace(/\W+/g, '_').toLowerCase() || 'klant';
-    const filename = `doa_diagnoseverslag_${klantSafe}_${datum}.pdf`;
-    pdf.save(filename);
+    const fn = `doa_diagnoseverslag_${kl.replace(/\W+/g,'_').toLowerCase()}_${dt}.pdf`;
+    pdf.save(fn);
   };
 </script>
-
 </body>
 </html>
+
+
