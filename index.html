@@ -93,6 +93,9 @@
 <label>Klachtomschrijving:</label>
 <textarea id="klacht" rows="4"></textarea>
 
+<label>Analyse van de permanent fouten:</label>
+<textarea id="fouten" rows="5"></textarea>
+
 <label>Diagnose en Analyse:</label>
 <textarea id="diagnose" rows="5"></textarea>
 
@@ -219,6 +222,7 @@
     addText("Kilometerstand", document.getElementById('kmstand').value);
 
     const klacht = document.getElementById('klacht').value;
+    const fouten = document.getElementById('fouten').value;
     const diagnose = document.getElementById('diagnose').value;
 
     const addMultilineText = (label, text) => {
@@ -233,6 +237,7 @@
     };
 
     addMultilineText("Klachtomschrijving", klacht);
+    addMultilineText("Analyse van de permanent fouten", fouten);
     addMultilineText("Diagnose en Analyse", diagnose);
 
     for (let i = 0; i < photoCount; i++) {
@@ -253,8 +258,9 @@
         }
         pdf.text(`Foto ${i + 1}: ${uitleg}`, 10, y);
         y += 5;
-        pdf.addImage(dataUrl, 'JPEG', 10, y, 180, (180 / img.naturalWidth) * img.naturalHeight);
-        y += ((180 / img.naturalWidth) * img.naturalHeight) + 10;
+        const imgHeight = (180 / img.naturalWidth) * img.naturalHeight;
+        pdf.addImage(dataUrl, 'JPEG', 10, y, 180, imgHeight);
+        y += imgHeight + 10;
       }
     }
 
