@@ -1,295 +1,239 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-    <meta charset="UTF-8" />
-    <title>DOA-Diagnostics Diagnose Verslag</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f4f7fa;
-            margin: 0; padding: 0;
-        }
-        header {
-            background: #42b0e5;
-            color: white;
-            padding: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        header img {
-            height: 50px;
-        }
-        .container {
-            max-width: 900px;
-            margin: 30px auto;
-            background: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.1);
-        }
-        h2 {
-            color: #42b0e5;
-            margin-bottom: 20px;
-        }
-        .form-group {
-            margin-bottom: 20px;
-        }
-        label {
-            display: block;
-            font-weight: bold;
-            margin-bottom: 6px;
-            color: #333;
-        }
-        input, textarea {
-            width: 100%;
-            padding: 10px 12px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 14px;
-        }
-        textarea {
-            resize: vertical;
-            min-height: 80px;
-        }
-        input:focus, textarea:focus {
-            outline: none;
-            border-color: #42b0e5;
-            box-shadow: 0 0 5px rgba(66, 176, 229, 0.5);
-        }
-        .foto-sectie {
-            border: 2px dashed #42b0e5;
-            padding: 15px;
-            border-radius: 6px;
-            margin-bottom: 20px;
-            background: #fafcfe;
-        }
-        .foto-sectie textarea {
-            font-weight: bold;
-            font-size: 15px;
-        }
-        button {
-            padding: 12px 20px;
-            border: none;
-            border-radius: 5px;
-            font-size: 15px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-right: 10px;
-        }
-        #voegSectieToe {
-            background: #28a745;
-            color: white;
-        }
-        #voegSectieToe:hover {
-            background: #218838;
-        }
-        #genereerPdf {
-            background: #007bff;
-            color: white;
-        }
-        #genereerPdf:hover {
-            background: #0069d9;
-        }
-    </style>
+<meta charset="UTF-8">
+<title>DOA-Diagnostics Diagnose Verslag</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #f5f8fa;
+    margin: 0;
+    padding: 0;
+}
+header {
+    background: #42b0e5;
+    color: white;
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+header img {
+    height: 50px;
+}
+.container {
+    max-width: 900px;
+    background: white;
+    padding: 30px;
+    margin: 30px auto;
+    border-radius: 8px;
+    box-shadow: 0 0 12px rgba(0,0,0,0.1);
+}
+.form-group {
+    margin-bottom: 18px;
+}
+label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+}
+input, textarea {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+.foto-sectie {
+    border: 2px dashed #42b0e5;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 6px;
+}
+button {
+    background: #42b0e5;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    font-size: 16px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+button:hover {
+    background: #3398c6;
+}
+</style>
 </head>
 <body>
 
 <header>
     <div>DOA-DIAGNOSTICS DIAGNOSE VERSLAG</div>
-    <img src="IMG_1971.png" alt="Logo" />
+    <img src="IMG_1971.png" alt="Logo">
 </header>
 
 <div class="container">
-    <form id="diagnoseForm">
-        <h2>Gegevens</h2>
-        <div class="form-group"><label>Opdrachtgever</label><input type="text" name="opdrachtgever" required /></div>
-        <div class="form-group"><label>Datum</label><input type="date" name="datum" required /></div>
-        <div class="form-group"><label>Kenteken</label><input type="text" name="kenteken" required /></div>
-        <div class="form-group"><label>Merk / Type</label><input type="text" name="merk" required /></div>
-        <div class="form-group"><label>Bouwjaar</label><input type="number" name="bouwjaar" required /></div>
-        <div class="form-group"><label>VIN</label><input type="text" name="vin" required /></div>
-        <div class="form-group"><label>Motorcode</label><input type="text" name="motorcode" required /></div>
-        <div class="form-group"><label>Kilometerstand</label><input type="number" name="kilometerstand" required /></div>
-        <div class="form-group"><label>Klachtomschrijving</label><textarea name="klachtomschrijving" required></textarea></div>
-        <div class="form-group"><label>Diagnose</label><textarea name="diagnose" required></textarea></div>
-        <div class="form-group"><label>Verklaring van opdrachtgever</label><textarea name="verklaring" required></textarea></div>
+    <div class="form-group">
+        <label>Opdrachtgever</label>
+        <input type="text" id="opdrachtgever">
+    </div>
+    <div class="form-group">
+        <label>Datum</label>
+        <input type="date" id="datum">
+    </div>
+    <div class="form-group">
+        <label>Kenteken</label>
+        <input type="text" id="kenteken">
+    </div>
+    <div class="form-group">
+        <label>Merk / Type</label>
+        <input type="text" id="merk">
+    </div>
+    <div class="form-group">
+        <label>Bouwjaar</label>
+        <input type="text" id="bouwjaar">
+    </div>
+    <div class="form-group">
+        <label>VIN</label>
+        <input type="text" id="vin">
+    </div>
+    <div class="form-group">
+        <label>Motorcode</label>
+        <input type="text" id="motorcode">
+    </div>
+    <div class="form-group">
+        <label>Kilometerstand</label>
+        <input type="text" id="kilometerstand">
+    </div>
+    <div class="form-group">
+        <label>Klachtomschrijving</label>
+        <textarea id="klacht"></textarea>
+    </div>
+    <div class="form-group">
+        <label>Diagnose</label>
+        <textarea id="diagnose"></textarea>
+    </div>
+    <div class="form-group">
+        <label>Verklaring van opdrachtgever</label>
+        <textarea id="verklaring"></textarea>
+    </div>
 
-        <h2>Analyse van de permanente fouten</h2>
-        <div class="foto-sectie">
-            <input type="file" accept="image/*" class="permanenteFoto" />
-            <textarea placeholder="Uitleg bij deze foto" class="permanenteUitleg"></textarea>
-        </div>
+    <h3>Analyse van de permanente fouten</h3>
+    <div class="foto-sectie">
+        <label>Uitleg</label>
+        <textarea></textarea>
+        <label>Foto</label>
+        <input type="file" accept="image/*">
+    </div>
 
-        <h2>Foto's</h2>
-        <div id="fotoSecties">
-            <div class="foto-sectie">
-                <input type="file" accept="image/*" />
-                <textarea placeholder="Uitleg bij foto"></textarea>
-            </div>
-            <div class="foto-sectie">
-                <input type="file" accept="image/*" />
-                <textarea placeholder="Uitleg bij foto"></textarea>
-            </div>
-        </div>
+    <h3>Overige foto secties</h3>
+    <div id="fotoSecties"></div>
+    <button onclick="voegSectieToe()">➕ Voeg een nieuwe sectie toe</button>
 
-        <button type="button" id="voegSectieToe">Voeg een nieuwe sectie toe</button>
-        <button type="button" id="genereerPdf">Genereer PDF</button>
-    </form>
+    <br><br>
+    <button onclick="genereerPDF()">📄 Genereer PDF</button>
 </div>
 
 <script>
-// Dynamisch foto-secties toevoegen
-document.getElementById('voegSectieToe').addEventListener('click', () => {
-    const container = document.getElementById('fotoSecties');
-    for (let i = 0; i < 2; i++) {
-        const div = document.createElement('div');
-        div.className = 'foto-sectie';
-        div.innerHTML = `
-            <input type="file" accept="image/*" />
-            <textarea placeholder="Uitleg bij foto"></textarea>
-        `;
-        container.appendChild(div);
-    }
-});
+function voegSectieToe() {
+    const sectie = document.createElement('div');
+    sectie.className = 'foto-sectie';
+    sectie.innerHTML = `
+        <label>Uitleg</label>
+        <textarea></textarea>
+        <label>Foto</label>
+        <input type="file" accept="image/*">
+    `;
+    document.getElementById('fotoSecties').appendChild(sectie);
+}
 
-// Logo als base64 laden
-let logoBase64 = '';
-fetch('IMG_1971.png')
-.then(res => res.blob())
-.then(blob => new Promise(r => {
-    const reader = new FileReader();
-    reader.onload = () => { logoBase64 = reader.result; r(); };
-    reader.readAsDataURL(blob);
-}));
-
-// PDF generatie
-document.getElementById('genereerPdf').addEventListener('click', async () => {
-    const form = document.getElementById('diagnoseForm');
-    const data = new FormData(form);
-
+async function genereerPDF() {
     const content = [];
 
-    // Gegevensvelden in losse vakken (kaders)
+    // Gegevensblokken
     const velden = [
-        ['Opdrachtgever', data.get('opdrachtgever')],
-        ['Datum', data.get('datum')],
-        ['Kenteken', data.get('kenteken')],
-        ['Merk / Type', data.get('merk')],
-        ['Bouwjaar', data.get('bouwjaar')],
-        ['VIN', data.get('vin')],
-        ['Motorcode', data.get('motorcode')],
-        ['Kilometerstand', data.get('kilometerstand')],
-        ['Klachtomschrijving', data.get('klachtomschrijving')],
-        ['Diagnose', data.get('diagnose')],
-        ['Verklaring van opdrachtgever', data.get('verklaring')]
+        {label: "Opdrachtgever", id: "opdrachtgever"},
+        {label: "Datum", id: "datum"},
+        {label: "Kenteken", id: "kenteken"},
+        {label: "Merk / Type", id: "merk"},
+        {label: "Bouwjaar", id: "bouwjaar"},
+        {label: "VIN", id: "vin"},
+        {label: "Motorcode", id: "motorcode"},
+        {label: "Kilometerstand", id: "kilometerstand"},
+        {label: "Klachtomschrijving", id: "klacht"},
+        {label: "Diagnose", id: "diagnose"},
+        {label: "Verklaring van opdrachtgever", id: "verklaring"}
     ];
-
-    velden.forEach(([label, value]) => {
+    velden.forEach(veld => {
         content.push({
             table: {
-                widths: ['30%', '*'],
-                body: [[
-                    { text: label + ':', bold: true, margin: [5, 5, 5, 5] },
-                    { text: value || '', margin: [5, 5, 5, 5] }
-                ]]
+                widths: ['auto', '*'],
+                body: [
+                    [
+                        { text: veld.label + ":", bold: true },
+                        { text: document.getElementById(veld.id).value || '' }
+                    ]
+                ]
             },
-            margin: [0, 5, 0, 10],
-            layout: {
-                hLineWidth: (i, node) => 1,
-                vLineWidth: (i, node) => 1,
-                hLineColor: (i, node) => '#ccc',
-                vLineColor: (i, node) => '#ccc',
-                paddingLeft: (i, node) => 5,
-                paddingRight: (i, node) => 5,
-            }
+            margin: [0,5,0,5]
         });
     });
 
-    // Analyse van de permanente fouten (kop + uitleg + foto samenhouden)
-    const permUitleg = document.querySelector('.permanenteUitleg').value.trim();
-    const permFotoInput = document.querySelector('.permanenteFoto');
-    const permFotoFile = permFotoInput.files.length > 0 ? permFotoInput.files[0] : null;
-
-    if (permUitleg || permFotoFile) {
-        const blok = [];
-
-        blok.push({ text: 'Analyse van de permanente fouten:', bold: true, fontSize: 14, margin: [0, 10, 0, 8] });
-
-        if (permUitleg) {
-            blok.push({ text: permUitleg, bold: true, fontSize: 13, margin: [0, 0, 0, 8] });
-        }
-
-        if (permFotoFile) {
-            const permFotoDataUrl = await toDataURL(permFotoFile);
-            blok.push({ image: permFotoDataUrl, width: 300 });
-        }
-
-        content.push({
-            stack: blok,
-            margin: [0, 10, 0, 10],
-            unbreakable: true
-        });
+    // Analyse blok
+    const analyseSectie = document.querySelector('.foto-sectie');
+    const uitleg = analyseSectie.querySelector('textarea').value.trim();
+    const fileInput = analyseSectie.querySelector('input[type=file]');
+    let analyseBlok = [];
+    if (uitleg) analyseBlok.push({ text: 'Analyse van de permanente fouten:', bold: true, fontSize: 14, margin: [0,10,0,4] });
+    if (uitleg) analyseBlok.push({ text: uitleg, bold: true, fontSize: 13, margin: [0,0,0,5] });
+    if (fileInput.files.length > 0) {
+        const imgData = await toDataURL(fileInput.files[0]);
+        analyseBlok.push({ image: imgData, width: 300 });
     }
+    if (analyseBlok.length) content.push({ stack: analyseBlok, unbreakable: true, margin: [0,10,0,10] });
 
-    // Foto secties dynamisch
-    const secties = document.querySelectorAll('#fotoSecties .foto-sectie');
-    for (const sectie of secties) {
+    // Extra dynamische foto secties
+    const extraSecties = document.querySelectorAll('#fotoSecties .foto-sectie');
+    for (let sectie of extraSecties) {
         const uitleg = sectie.querySelector('textarea').value.trim();
-        const fotoInput = sectie.querySelector('input[type=file]');
-        const fotoFile = fotoInput.files.length > 0 ? fotoInput.files[0] : null;
-
-        if (!uitleg && !fotoFile) continue; // niks ingevuld overslaan
-
-        const blok = [];
-        if (uitleg) blok.push({ text: uitleg, bold: true, fontSize: 13, margin: [0, 10, 0, 8] });
-
-        if (fotoFile) {
-            const fotoDataUrl = await toDataURL(fotoFile);
-            blok.push({ image: fotoDataUrl, width: 300 });
+        const fileInput = sectie.querySelector('input[type=file]');
+        let blok = [];
+        if (uitleg) blok.push({ text: uitleg, bold: true, fontSize: 13, margin: [0,0,0,5] });
+        if (fileInput.files.length > 0) {
+            const imgData = await toDataURL(fileInput.files[0]);
+            blok.push({ image: imgData, width: 300 });
         }
-
-        content.push({
-            stack: blok,
-            margin: [0, 10, 0, 10],
-            unbreakable: true
-        });
+        if (blok.length) content.push({ stack: blok, unbreakable: true, margin: [0,10,0,10] });
     }
 
-    // Documentdefinitie voor pdfMake
+    // PDF definitie
     const docDefinition = {
         pageMargins: [40, 80, 40, 60],
-        header: (currentPage, pageCount, pageSize) => {
-            return {
-                columns: [
-                    { text: 'DOA-DIAGNOSTICS DIAGNOSE VERSLAG', bold: true, fontSize: 14, color: 'white', margin: [40, 20, 0, 20] },
-                    { image: logoBase64 || '', width: 50, alignment: 'right', margin: [0, 15, 40, 15] }
-                ],
-                columnGap: 10,
-                fillColor: '#42b0e5',
-                margin: [0, 0, 0, 0],
-                absolutePosition: {x: 0, y: 0, w: pageSize.width, h: 60}
-            };
+        header: {
+            table: {
+                widths: ['*', 60],
+                body: [
+                    [
+                        { text: 'DOA-DIAGNOSTICS DIAGNOSE VERSLAG', bold: true, fontSize: 14, color: 'white', margin: [10,6,0,6]},
+                        { image: 'IMG_1971.png', width: 50 }
+                    ]
+                ]
+            },
+            layout: {
+                fillColor: () => '#42b0e5'
+            }
         },
-        content: content,
-        styles: {
-            label: { bold: true },
-            uitlegFoto: { fontSize: 13, bold: true, margin: [0, 10, 0, 8] }
-        }
+        content: content
     };
 
     if (window.innerWidth <= 768) {
-        // Op mobiel: direct tonen
         pdfMake.createPdf(docDefinition).open();
     } else {
-        // Op pc/laptop: download
         pdfMake.createPdf(docDefinition).download('DOA-Diagnostics_Diagnose_Verslag.pdf');
     }
-});
+}
 
-// Helper: converteer File naar DataURL
 function toDataURL(file) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
