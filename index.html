@@ -77,13 +77,43 @@
       font-size: 15px;
     }
 
+    #canvas {
+      position: relative;
+      width: 595px;
+      height: 842px;
+      background: #ffffff;
+      border: 2px solid #ccc;
+      margin: 30px auto;
+    }
+
+    .text-box {
+      position: absolute;
+      min-width: 100px;
+      min-height: 30px;
+      padding: 6px 8px;
+      border: 1px solid #888;
+      background: #fefefe;
+      cursor: move;
+      resize: both;
+      overflow: auto;
+    }
+
+    .text-box:focus {
+      outline: 2px dashed #42b0e5;
+    }
+
+    .canvas-controls {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
     button {
       padding: 12px 20px;
       border: none;
       border-radius: 5px;
       font-size: 15px;
       cursor: pointer;
-      margin-right: 10px;
+      margin: 5px;
     }
 
     #voegSectieToe {
@@ -94,6 +124,11 @@
     #genereerPdf {
       background: #007bff;
       color: white;
+    }
+
+    #voegTekstvakToe {
+      background: #ffc107;
+      color: black;
     }
   </style>
 </head>
@@ -134,8 +169,19 @@
     </div>
 
     <button type="button" id="voegSectieToe">Voeg een nieuwe sectie toe</button>
-    <button type="button" id="genereerPdf">Genereer PDF</button>
   </form>
+</div>
+
+<div class="canvas-controls">
+  <button id="voegTekstvakToe">Voeg tekstvak toe</button>
+</div>
+
+<div id="canvas">
+  <div class="text-box" contenteditable="true" style="top: 20px; left: 20px;">Typ hier iets...</div>
+</div>
+
+<div class="canvas-controls">
+  <button id="genereerPdf">Genereer PDF</button>
 </div>
 
 <script>
@@ -150,6 +196,43 @@ document.getElementById('voegSectieToe').addEventListener('click', () => {
   container.appendChild(div);
 });
 
+document.getElementById('voegTekstvakToe').addEventListener('click', () => {
+  const box = document.createElement('div');
+  box.className = 'text-box';
+  box.contentEditable = true;
+  box.innerText = 'Nieuwe tekst...';
+  box.style.top = '100px';
+  box.style.left = '100px';
+  document.getElementById('canvas').appendChild(box);
+  makeDraggable(box);
+});
+
+function makeDraggable(el) {
+  let offsetX = 0, offsetY = 0, isDragging = false;
+
+  el.addEventListener('mousedown', function(e) {
+    if (e.target !== el) return;
+    isDragging = true;
+    offsetX = e.clientX - el.offsetLeft;
+    offsetY = e.clientY - el.offsetTop;
+    el.style.zIndex = 1000;
+  });
+
+  document.addEventListener('mousemove', function(e) {
+    if (isDragging) {
+      el.style.left = (e.clientX - offsetX) + 'px';
+      el.style.top = (e.clientY - offsetY) + 'px';
+    }
+  });
+
+  document.addEventListener('mouseup', function() {
+    isDragging = false;
+    el.style.zIndex = '';
+  });
+}
+
+document.querySelectorAll('.text-box').forEach(makeDraggable);
+
 let logoBase64 = '';
 let logoReady = false;
 
@@ -159,7 +242,7 @@ fetch('IMG_1971.png')
     const reader = new FileReader();
     reader.onload = () => { 
       logoBase64 = reader.result; 
-      logoReady = true;  // logo is klaar!
+      logoReady = true; 
       resolve(); 
     };
     reader.readAsDataURL(blob);
@@ -203,7 +286,6 @@ document.getElementById('genereerPdf').addEventListener('click', async () => {
     });
   });
 
-  // Permanente fout
   const permUitleg = document.querySelector('.permanenteUitleg').value.trim();
   const permFotoFile = document.querySelector('.permanenteFoto').files[0];
 
@@ -220,7 +302,6 @@ document.getElementById('genereerPdf').addEventListener('click', async () => {
     content.push({ stack: blok, margin: [0, 10, 0, 10], unbreakable: true });
   }
 
-  // Andere foto-secties
   const secties = document.querySelectorAll('#fotoSecties .foto-sectie');
   for (const sectie of secties) {
     const uitleg = sectie.querySelector('textarea').value.trim();
@@ -238,9 +319,23 @@ document.getElementById('genereerPdf').addEventListener('click', async () => {
     content.push({ stack: blok, margin: [0, 10, 0, 10], unbreakable: true });
   }
 
+  // Toegevoegde tekstvakken van canvas
+  document.querySelectorAll('#canvas .text-box').forEach(box => {
+    const text = box.innerText.trim();
+    const x = box.offsetLeft;
+    const y = box.offsetTop;
+    if (text) {
+      content.push({
+        text: text,
+        absolutePosition: { x: x, y: y + 100 }, // +100 voor header ruimte
+        fontSize: 12
+      });
+    }
+  });
+
   const docDefinition = {
-    pageMargins: [40, 80, 40, 60], // ruimte voor de header
-    header: function(currentPage, pageCount, pageSize) {
+    pageMargins: [40, 80, 40, 60],
+    header: function() {
       return {
         margin: [0, 0, 0, 0],
         table: {
@@ -262,9 +357,7 @@ document.getElementById('genereerPdf').addEventListener('click', async () => {
           ]]
         },
         layout: {
-          fillColor: function() {
-            return '#42b0e5';
-          },
+          fillColor: () => '#42b0e5',
           hLineWidth: () => 0,
           vLineWidth: () => 0
         }
@@ -273,11 +366,7 @@ document.getElementById('genereerPdf').addEventListener('click', async () => {
     content: content
   };
 
-  if (window.innerWidth <= 768) {
-    pdfMake.createPdf(docDefinition).open();
-  } else {
-    pdfMake.createPdf(docDefinition).download('DOA_Diagnose_Verslag.pdf');
-  }
+  pdfMake.createPdf(docDefinition).download('DOA_Diagnose_Verslag.pdf');
 });
 
 function toDataURL(file) {
