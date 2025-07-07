@@ -144,6 +144,11 @@
       background: #ffc107;
       color: black;
     }
+
+    #voorbeeldPdf {
+      background: #17a2b8;
+      color: white;
+    }
   </style>
 </head>
 <body>
@@ -200,6 +205,7 @@
 
 <div class="canvas-controls">
   <button id="genereerPdf">Genereer PDF</button>
+  <button id="voorbeeldPdf">Voorbeeld PDF</button>
 </div>
 
 <script>
@@ -265,12 +271,8 @@ fetch('IMG_1971.png')
     reader.readAsDataURL(blob);
   }));
 
-document.getElementById('genereerPdf').addEventListener('click', async () => {
-  if (!logoReady) {
-    alert('Logo is nog niet geladen, probeer het over een paar seconden opnieuw.');
-    return;
-  }
 
+async function maakDocDef() {
   const form = document.getElementById('diagnoseForm');
   const data = new FormData(form);
   const content = [];
@@ -349,52 +351,56 @@ document.getElementById('genereerPdf').addEventListener('click', async () => {
     }
   });
 
-  const docDefinition = {
-    pageMargins: [40, 80, 40, 60],
-    header: function() {
-      return {
-        margin: [0, 0, 0, 0],
-        table: {
-          widths: ['*', 'auto'],
-          body: [[
-            {
-              text: 'DOA-DIAGNOSTICS DIAGNOSE VERSLAG',
-              fontSize: 14,
-              bold: true,
-              color: 'white',
-              margin: [20, 10, 0, 10]
-            },
-            {
-              image: logoBase64,
-              width: 50,
-              alignment: 'right',
-              margin: [0, 5, 20, 5]
-            }
-          ]]
+  const docDef = {
+    pageSize: 'A4',
+    pageMargins: [40, 100, 40, 60],
+    header: (currentPage, pageCount, pageSize) => ({
+      margin: 10,
+      columns: [
+        { image: logoBase64, width: 50, height: 50 },
+        {
+          text: 'DOA-DIAGNOSTICS DIAGNOSE VERSLAG',
+          fontSize: 16,
+          bold: true,
+          alignment: 'center',
+          margin: [0, 15, 0, 0]
         },
-        layout: {
-          fillColor: () => '#42b0e5',
-          hLineWidth: () => 0,
-          vLineWidth: () => 0
-        }
-      };
-    },
+        { text: `Pagina ${currentPage} van ${pageCount}`, alignment: 'right', margin: [0, 20, 10, 0], fontSize: 10 }
+      ]
+    }),
+    footer: (currentPage, pageCount) => ({
+      text: `DOA-Diagnostics | www.doa-diagnostics.nl | Pagina ${currentPage} van ${pageCount}`,
+      alignment: 'center',
+      margin: [0, 0, 0, 10],
+      fontSize: 9,
+      color: '#999'
+    }),
     content: content
   };
 
-  pdfMake.createPdf(docDefinition).getDataUrl((dataUrl) => {
-    document.getElementById('pdfPreview').src = dataUrl;
-  });
-});
+  return docDef;
+}
 
 function toDataURL(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = e => resolve(e.target.result);
-    reader.onerror = reject;
+    reader.onerror = e => reject(e);
     reader.readAsDataURL(file);
   });
 }
+
+document.getElementById('genereerPdf').addEventListener('click', async () => {
+  const docDef = await maakDocDef();
+  pdfMake.createPdf(docDef).download('DOA_Diagnostics_Diagnose_Verslag.pdf');
+});
+
+document.getElementById('voorbeeldPdf').addEventListener('click', async () => {
+  const docDef = await maakDocDef();
+  pdfMake.createPdf(docDef).getDataUrl((dataUrl) => {
+    document.getElementById('pdfPreview').src = dataUrl;
+  });
+});
 </script>
 
 </body>
