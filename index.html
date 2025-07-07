@@ -77,13 +77,27 @@
       font-size: 15px;
     }
 
+    .canvas-preview-wrapper {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin: 30px auto;
+      max-width: 1300px;
+    }
+
     #canvas {
       position: relative;
       width: 595px;
       height: 842px;
       background: #ffffff;
       border: 2px solid #ccc;
-      margin: 30px auto;
+    }
+
+    #pdfPreview {
+      width: 595px;
+      height: 842px;
+      border: 2px solid #ccc;
+      background: #fff;
     }
 
     .text-box {
@@ -176,8 +190,12 @@
   <button id="voegTekstvakToe">Voeg tekstvak toe</button>
 </div>
 
-<div id="canvas">
-  <div class="text-box" contenteditable="true" style="top: 20px; left: 20px;">Typ hier iets...</div>
+<div class="canvas-preview-wrapper">
+  <div id="canvas">
+    <div class="text-box" contenteditable="true" style="top: 20px; left: 20px;">Typ hier iets...</div>
+  </div>
+
+  <iframe id="pdfPreview"></iframe>
 </div>
 
 <div class="canvas-controls">
@@ -318,7 +336,6 @@ document.getElementById('genereerPdf').addEventListener('click', async () => {
     content.push({ stack: blok, margin: [0, 10, 0, 10], unbreakable: true });
   }
 
-  // Toegevoegde tekstvakken van canvas
   document.querySelectorAll('#canvas .text-box').forEach(box => {
     const text = box.innerText.trim();
     const x = box.offsetLeft;
@@ -326,7 +343,7 @@ document.getElementById('genereerPdf').addEventListener('click', async () => {
     if (text) {
       content.push({
         text: text,
-        absolutePosition: { x: x, y: y + 100 }, // +100 voor header ruimte
+        absolutePosition: { x: x, y: y + 100 },
         fontSize: 12
       });
     }
@@ -365,7 +382,9 @@ document.getElementById('genereerPdf').addEventListener('click', async () => {
     content: content
   };
 
-  pdfMake.createPdf(docDefinition).download('DOA_Diagnose_Verslag.pdf');
+  pdfMake.createPdf(docDefinition).getDataUrl((dataUrl) => {
+    document.getElementById('pdfPreview').src = dataUrl;
+  });
 });
 
 function toDataURL(file) {
