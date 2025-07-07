@@ -9,8 +9,10 @@
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background: #f4f7fa;
-      margin: 0; padding: 0;
+      margin: 0;
+      padding: 0;
     }
+
     header {
       background: #42b0e5;
       color: white;
@@ -19,30 +21,36 @@
       justify-content: space-between;
       align-items: center;
     }
+
     header img {
       height: 50px;
     }
+
     .container {
       max-width: 900px;
       margin: 30px auto;
       background: white;
       padding: 30px;
       border-radius: 8px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
     }
+
     h2 {
       color: #42b0e5;
       margin-bottom: 20px;
     }
+
     .form-group {
       margin-bottom: 20px;
     }
+
     label {
       display: block;
       font-weight: bold;
       margin-bottom: 6px;
       color: #333;
     }
+
     input, textarea {
       width: 100%;
       padding: 10px 12px;
@@ -50,15 +58,12 @@
       border-radius: 5px;
       font-size: 14px;
     }
+
     textarea {
       resize: vertical;
       min-height: 80px;
     }
-    input:focus, textarea:focus {
-      outline: none;
-      border-color: #42b0e5;
-      box-shadow: 0 0 5px rgba(66, 176, 229, 0.5);
-    }
+
     .foto-sectie {
       border: 2px dashed #42b0e5;
       padding: 15px;
@@ -66,32 +71,29 @@
       margin-bottom: 20px;
       background: #fafcfe;
     }
+
     .foto-sectie textarea {
       font-weight: bold;
       font-size: 15px;
     }
+
     button {
       padding: 12px 20px;
       border: none;
       border-radius: 5px;
       font-size: 15px;
       cursor: pointer;
-      transition: all 0.3s ease;
       margin-right: 10px;
     }
+
     #voegSectieToe {
       background: #28a745;
       color: white;
     }
-    #voegSectieToe:hover {
-      background: #218838;
-    }
+
     #genereerPdf {
       background: #007bff;
       color: white;
-    }
-    #genereerPdf:hover {
-      background: #0069d9;
     }
   </style>
 </head>
@@ -99,38 +101,34 @@
 
 <header>
   <div>DOA-DIAGNOSTICS DIAGNOSE VERSLAG</div>
-  <img src="IMG_1971.png" alt="Logo" />
+  <img src="IMG_1971.png" alt="Logo">
 </header>
 
 <div class="container">
   <form id="diagnoseForm">
     <h2>Gegevens</h2>
-    <div class="form-group"><label>Opdrachtgever</label><input type="text" name="opdrachtgever" required /></div>
-    <div class="form-group"><label>Datum</label><input type="date" name="datum" required /></div>
-    <div class="form-group"><label>Kenteken</label><input type="text" name="kenteken" required /></div>
-    <div class="form-group"><label>Merk / Type</label><input type="text" name="merk" required /></div>
-    <div class="form-group"><label>Bouwjaar</label><input type="number" name="bouwjaar" required /></div>
-    <div class="form-group"><label>VIN</label><input type="text" name="vin" required /></div>
-    <div class="form-group"><label>Motorcode</label><input type="text" name="motorcode" required /></div>
-    <div class="form-group"><label>Kilometerstand</label><input type="number" name="kilometerstand" required /></div>
+    <div class="form-group"><label>Opdrachtgever</label><input type="text" name="opdrachtgever" required></div>
+    <div class="form-group"><label>Datum</label><input type="date" name="datum" required></div>
+    <div class="form-group"><label>Kenteken</label><input type="text" name="kenteken" required></div>
+    <div class="form-group"><label>Merk / Type</label><input type="text" name="merk" required></div>
+    <div class="form-group"><label>Bouwjaar</label><input type="text" name="bouwjaar" required></div>
+    <div class="form-group"><label>VIN</label><input type="text" name="vin" required></div>
+    <div class="form-group"><label>Motorcode</label><input type="text" name="motorcode" required></div>
+    <div class="form-group"><label>Kilometerstand</label><input type="text" name="kilometerstand" required></div>
     <div class="form-group"><label>Klachtomschrijving</label><textarea name="klachtomschrijving" required></textarea></div>
     <div class="form-group"><label>Diagnose</label><textarea name="diagnose" required></textarea></div>
     <div class="form-group"><label>Verklaring van opdrachtgever</label><textarea name="verklaring" required></textarea></div>
 
     <h2>Analyse van de permanente fouten</h2>
     <div class="foto-sectie">
-      <input type="file" accept="image/*" class="permanenteFoto" />
+      <input type="file" accept="image/*" class="permanenteFoto">
       <textarea placeholder="Uitleg bij deze foto" class="permanenteUitleg"></textarea>
     </div>
 
     <h2>Foto's</h2>
     <div id="fotoSecties">
       <div class="foto-sectie">
-        <input type="file" accept="image/*" />
-        <textarea placeholder="Uitleg bij foto"></textarea>
-      </div>
-      <div class="foto-sectie">
-        <input type="file" accept="image/*" />
+        <input type="file" accept="image/*">
         <textarea placeholder="Uitleg bij foto"></textarea>
       </div>
     </div>
@@ -141,47 +139,40 @@
 </div>
 
 <script>
-// Dynamisch foto-secties toevoegen
 document.getElementById('voegSectieToe').addEventListener('click', () => {
   const container = document.getElementById('fotoSecties');
-  for (let i = 0; i < 2; i++) {
-    const div = document.createElement('div');
-    div.className = 'foto-sectie';
-    div.innerHTML = `
-      <input type="file" accept="image/*" />
-      <textarea placeholder="Uitleg bij foto"></textarea>
-    `;
-    container.appendChild(div);
-  }
+  const div = document.createElement('div');
+  div.className = 'foto-sectie';
+  div.innerHTML = `
+    <input type="file" accept="image/*">
+    <textarea placeholder="Uitleg bij foto"></textarea>
+  `;
+  container.appendChild(div);
 });
 
-// Logo als base64 laden
 let logoBase64 = '';
 fetch('IMG_1971.png')
   .then(res => res.blob())
-  .then(blob => new Promise(r => {
+  .then(blob => new Promise(resolve => {
     const reader = new FileReader();
-    reader.onload = () => { logoBase64 = reader.result; r(); };
+    reader.onload = () => { logoBase64 = reader.result; resolve(); };
     reader.readAsDataURL(blob);
   }));
 
-// PDF generatie
 document.getElementById('genereerPdf').addEventListener('click', async () => {
   const form = document.getElementById('diagnoseForm');
   const data = new FormData(form);
-
   const content = [];
 
-  // Gegevensvelden in kaders
   const velden = [
     ['Opdrachtgever', data.get('opdrachtgever')],
     ['Datum', data.get('datum')],
     ['Kenteken', data.get('kenteken')],
     ['Merk / Type', data.get('merk')],
-    ['Bouwjaar', data.get('bouwjaar') || 'Niet ingevuld'],
+    ['Bouwjaar', data.get('bouwjaar')],
     ['VIN', data.get('vin')],
     ['Motorcode', data.get('motorcode')],
-    ['Kilometerstand', data.get('kilometerstand') || 'Niet ingevuld'],
+    ['Kilometerstand', data.get('kilometerstand')],
     ['Klachtomschrijving', data.get('klachtomschrijving')],
     ['Diagnose', data.get('diagnose')],
     ['Verklaring van opdrachtgever', data.get('verklaring')]
@@ -192,88 +183,76 @@ document.getElementById('genereerPdf').addEventListener('click', async () => {
       table: {
         widths: ['30%', '*'],
         body: [[
-          { text: label + ':', bold: true, margin: [5, 5, 5, 5] },
-          { text: value || 'Niet ingevuld', margin: [5, 5, 5, 5] }
+          { text: label + ':', bold: true },
+          { text: value || '' }
         ]]
       },
       margin: [0, 5, 0, 10],
-      layout: {
-        hLineWidth: () => 1,
-        vLineWidth: () => 1,
-        hLineColor: () => '#ccc',
-        vLineColor: () => '#ccc',
-        paddingLeft: () => 5,
-        paddingRight: () => 5,
-      }
+      layout: 'lightHorizontalLines'
     });
   });
 
-  // Permanente fouten
+  // Permanente fout
   const permUitleg = document.querySelector('.permanenteUitleg').value.trim();
-  const permFotoInput = document.querySelector('.permanenteFoto');
-  const permFotoFile = permFotoInput.files.length > 0 ? permFotoInput.files[0] : null;
+  const permFotoFile = document.querySelector('.permanenteFoto').files[0];
 
   if (permUitleg || permFotoFile) {
     const blok = [];
     blok.push({ text: 'Analyse van de permanente fouten:', bold: true, fontSize: 14, margin: [0, 10, 0, 8] });
-    if (permUitleg) {
-      blok.push({ text: permUitleg, bold: true, fontSize: 13, margin: [0, 0, 0, 8] });
-    }
+    if (permUitleg) blok.push({ text: permUitleg, fontSize: 13, bold: true });
+
     if (permFotoFile) {
-      const permFotoDataUrl = await toDataURL(permFotoFile);
-      blok.push({ image: permFotoDataUrl, width: 300 });
+      const img = await toDataURL(permFotoFile);
+      blok.push({ image: img, width: 300 });
     }
+
     content.push({ stack: blok, margin: [0, 10, 0, 10], unbreakable: true });
   }
 
-  // Foto-secties
+  // Andere foto-secties
   const secties = document.querySelectorAll('#fotoSecties .foto-sectie');
   for (const sectie of secties) {
     const uitleg = sectie.querySelector('textarea').value.trim();
-    const fotoInput = sectie.querySelector('input[type=file]');
-    const fotoFile = fotoInput.files.length > 0 ? fotoInput.files[0] : null;
-    if (!uitleg && !fotoFile) continue;
+    const bestand = sectie.querySelector('input').files[0];
+    if (!uitleg && !bestand) continue;
+
     const blok = [];
-    if (uitleg) blok.push({ text: uitleg, bold: true, fontSize: 13, margin: [0, 10, 0, 8] });
-    if (fotoFile) {
-      const fotoDataUrl = await toDataURL(fotoFile);
-      blok.push({ image: fotoDataUrl, width: 300 });
+    if (uitleg) blok.push({ text: uitleg, fontSize: 13, bold: true });
+
+    if (bestand) {
+      const img = await toDataURL(bestand);
+      blok.push({ image: img, width: 300 });
     }
+
     content.push({ stack: blok, margin: [0, 10, 0, 10], unbreakable: true });
   }
 
-  // PDF definitie
   const docDefinition = {
     pageMargins: [40, 80, 40, 60],
-    header: (currentPage, pageCount, pageSize) => ({
-      columns: [
-        { text: 'DOA-DIAGNOSTICS DIAGNOSE VERSLAG', bold: true, fontSize: 14, color: 'white', margin: [40, 20, 0, 20] },
-        { image: logoBase64 || '', width: 80, alignment: 'right', margin: [0, 15, 40, 15] }
-      ],
-      fillColor: '#42b0e5',
+    header: {
       margin: [0, 0, 0, 0],
-      absolutePosition: {x: 0, y: 0, w: pageSize.width, h: 60}
-    }),
-    content,
-    styles: {
-      label: { bold: true },
-      uitlegFoto: { fontSize: 13, bold: true, margin: [0, 10, 0, 8] }
-    }
+      canvas: [],
+      columns: [
+        { text: 'DOA-DIAGNOSTICS DIAGNOSE VERSLAG', color: 'white', bold: true, fontSize: 14, margin: [40, 20, 0, 20] },
+        { image: logoBase64 || '', width: 50, alignment: 'right', margin: [0, 15, 40, 15] }
+      ],
+      fillColor: '#42b0e5'
+    },
+    content
   };
 
   if (window.innerWidth <= 768) {
     pdfMake.createPdf(docDefinition).open();
   } else {
-    pdfMake.createPdf(docDefinition).download('DOA-Diagnostics_Diagnose_Verslag.pdf');
+    pdfMake.createPdf(docDefinition).download('DOA_Diagnose_Verslag.pdf');
   }
 });
 
-// Helper: File naar DataURL
 function toDataURL(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = e => resolve(e.target.result);
-    reader.onerror = e => reject(e);
+    reader.onerror = reject;
     reader.readAsDataURL(file);
   });
 }
