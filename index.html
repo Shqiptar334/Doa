@@ -96,7 +96,6 @@
       cursor: move;
       resize: both;
       overflow: auto;
-      user-select: text;
     }
 
     .text-box:focus {
@@ -130,16 +129,6 @@
     #voegTekstvakToe {
       background: #ffc107;
       color: black;
-    }
-
-    /* Preview-box: visuele overlay tijdens slepen */
-    .preview-box {
-      position: absolute;
-      border: 2px dashed #007bff;
-      background: rgba(66, 176, 229, 0.15);
-      pointer-events: none;
-      z-index: 9999;
-      transition: none !important;
     }
   </style>
 </head>
@@ -200,10 +189,10 @@ document.getElementById('voegSectieToe').addEventListener('click', () => {
   const container = document.getElementById('fotoSecties');
   const div = document.createElement('div');
   div.className = 'foto-sectie';
-  div.innerHTML = `
+  div.innerHTML = 
     <input type="file" accept="image/*">
     <textarea placeholder="Uitleg bij foto"></textarea>
-  `;
+  ;
   container.appendChild(div);
 });
 
@@ -221,69 +210,24 @@ document.getElementById('voegTekstvakToe').addEventListener('click', () => {
 function makeDraggable(el) {
   let offsetX = 0, offsetY = 0, isDragging = false;
 
-  // Preview-box maken en toevoegen
-  let preview;
-
   el.addEventListener('mousedown', function(e) {
-    // Alleen slepen starten als je echt het element zelf pakt (niet child elementen)
     if (e.target !== el) return;
-
     isDragging = true;
     offsetX = e.clientX - el.offsetLeft;
     offsetY = e.clientY - el.offsetTop;
     el.style.zIndex = 1000;
-
-    // Preview-box maken
-    preview = document.createElement('div');
-    preview.classList.add('preview-box');
-    preview.style.width = el.offsetWidth + 'px';
-    preview.style.height = el.offsetHeight + 'px';
-
-    // Positioneer preview op huidige positie
-    const canvasRect = document.getElementById('canvas').getBoundingClientRect();
-    preview.style.left = (el.offsetLeft + canvasRect.left) + 'px';
-    preview.style.top = (el.offsetTop + canvasRect.top) + 'px';
-
-    document.body.appendChild(preview);
-
-    // Voorkom selecteren tijdens slepen
-    document.body.style.userSelect = 'none';
   });
 
   document.addEventListener('mousemove', function(e) {
     if (isDragging) {
-      // Bereken nieuwe positie binnen canvas
-      const canvas = document.getElementById('canvas');
-      const canvasRect = canvas.getBoundingClientRect();
-
-      let newLeft = e.clientX - offsetX - canvasRect.left;
-      let newTop = e.clientY - offsetY - canvasRect.top;
-
-      // Grenzen (binnen canvas) afdwingen
-      newLeft = Math.max(0, Math.min(newLeft, canvas.clientWidth - el.offsetWidth));
-      newTop = Math.max(0, Math.min(newTop, canvas.clientHeight - el.offsetHeight));
-
-      el.style.left = newLeft + 'px';
-      el.style.top = newTop + 'px';
-
-      // Preview mee laten bewegen, maar fixed op scherm (dus + canvasRect)
-      preview.style.left = (newLeft + canvasRect.left) + 'px';
-      preview.style.top = (newTop + canvasRect.top) + 'px';
+      el.style.left = (e.clientX - offsetX) + 'px';
+      el.style.top = (e.clientY - offsetY) + 'px';
     }
   });
 
   document.addEventListener('mouseup', function() {
-    if (isDragging) {
-      isDragging = false;
-      el.style.zIndex = '';
-      if (preview && preview.parentNode) {
-        preview.parentNode.removeChild(preview);
-      }
-      preview = null;
-
-      // Selecteren weer toelaten
-      document.body.style.userSelect = '';
-    }
+    isDragging = false;
+    el.style.zIndex = '';
   });
 }
 
@@ -434,5 +378,6 @@ function toDataURL(file) {
   });
 }
 </script>
+
 </body>
-</html>
+</html> 
