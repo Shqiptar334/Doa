@@ -151,15 +151,26 @@ document.getElementById('voegSectieToe').addEventListener('click', () => {
 });
 
 let logoBase64 = '';
+let logoReady = false;
+
 fetch('IMG_1971.png')
   .then(res => res.blob())
   .then(blob => new Promise(resolve => {
     const reader = new FileReader();
-    reader.onload = () => { logoBase64 = reader.result; resolve(); };
+    reader.onload = () => { 
+      logoBase64 = reader.result; 
+      logoReady = true;  // logo is klaar!
+      resolve(); 
+    };
     reader.readAsDataURL(blob);
   }));
 
 document.getElementById('genereerPdf').addEventListener('click', async () => {
+  if (!logoReady) {
+    alert('Logo is nog niet geladen, probeer het over een paar seconden opnieuw.');
+    return;
+  }
+
   const form = document.getElementById('diagnoseForm');
   const data = new FormData(form);
   const content = [];
@@ -228,46 +239,39 @@ document.getElementById('genereerPdf').addEventListener('click', async () => {
   }
 
   const docDefinition = {
-  pageMargins: [40, 80, 40, 60], // ruimte voor de header
-  header: function(currentPage, pageCount, pageSize) {
-    return {
-      margin: [0, 0, 0, 0],
-      table: {
-        widths: ['*', 'auto'],
-        body: [[
-          {
-            text: 'DOA-DIAGNOSTICS DIAGNOSE VERSLAG',
-            fontSize: 14,
-            bold: true,
-            color: 'white',
-            margin: [20, 10, 0, 10]
-          },
-          {
-            image: logoBase64 || '',
-            width: 50,
-            alignment: 'right',
-            margin: [0, 5, 20, 5]
-          }
-        ]]
-      },
-      layout: {
-        fillColor: function() {
-          return '#42b0e5';
+    pageMargins: [40, 80, 40, 60], // ruimte voor de header
+    header: function(currentPage, pageCount, pageSize) {
+      return {
+        margin: [0, 0, 0, 0],
+        table: {
+          widths: ['*', 'auto'],
+          body: [[
+            {
+              text: 'DOA-DIAGNOSTICS DIAGNOSE VERSLAG',
+              fontSize: 14,
+              bold: true,
+              color: 'white',
+              margin: [20, 10, 0, 10]
+            },
+            {
+              image: logoBase64,
+              width: 50,
+              alignment: 'right',
+              margin: [0, 5, 20, 5]
+            }
+          ]]
         },
-        hLineWidth: () => 0,
-        vLineWidth: () => 0
-      }
-    };
-  },
-  content: content
-};
-
-// PDF genereren en openen/downloaden
-if (window.innerWidth <= 768) {
-  pdfMake.createPdf(docDefinition).open();
-} else {
-  pdfMake.createPdf(docDefinition).download('DOA_Diagnose_Verslag.pdf');
-}
+        layout: {
+          fillColor: function() {
+            return '#42b0e5';
+          },
+          hLineWidth: () => 0,
+          vLineWidth: () => 0
+        }
+      };
+    },
+    content: content
+  };
 
   if (window.innerWidth <= 768) {
     pdfMake.createPdf(docDefinition).open();
