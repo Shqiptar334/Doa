@@ -227,36 +227,47 @@ document.getElementById('genereerPdf').addEventListener('click', async () => {
     content.push({ stack: blok, margin: [0, 10, 0, 10], unbreakable: true });
   }
 
+  const docDefinition = {
+  pageMargins: [40, 80, 40, 60], // ruimte voor de header
   header: function(currentPage, pageCount, pageSize) {
     return {
-        margin: [0, 0, 0, 0],
-        table: {
-            widths: ['*', 'auto'],
-            body: [[
-                {
-                    text: 'DOA-DIAGNOSTICS DIAGNOSE VERSLAG',
-                    fontSize: 14,
-                    bold: true,
-                    color: 'white',
-                    margin: [20, 10, 0, 10]
-                },
-                {
-                    image: logoBase64 || '',
-                    width: 50,
-                    alignment: 'right',
-                    margin: [0, 5, 20, 5]
-                }
-            ]]
+      margin: [0, 0, 0, 0],
+      table: {
+        widths: ['*', 'auto'],
+        body: [[
+          {
+            text: 'DOA-DIAGNOSTICS DIAGNOSE VERSLAG',
+            fontSize: 14,
+            bold: true,
+            color: 'white',
+            margin: [20, 10, 0, 10]
+          },
+          {
+            image: logoBase64 || '',
+            width: 50,
+            alignment: 'right',
+            margin: [0, 5, 20, 5]
+          }
+        ]]
+      },
+      layout: {
+        fillColor: function() {
+          return '#42b0e5';
         },
-        layout: {
-            fillColor: function(rowIndex, node, columnIndex) {
-                return '#42b0e5';
-            },
-            hLineWidth: () => 0,
-            vLineWidth: () => 0
-        }
+        hLineWidth: () => 0,
+        vLineWidth: () => 0
+      }
     };
-},
+  },
+  content: content
+};
+
+// PDF genereren en openen/downloaden
+if (window.innerWidth <= 768) {
+  pdfMake.createPdf(docDefinition).open();
+} else {
+  pdfMake.createPdf(docDefinition).download('DOA_Diagnose_Verslag.pdf');
+}
 
   if (window.innerWidth <= 768) {
     pdfMake.createPdf(docDefinition).open();
